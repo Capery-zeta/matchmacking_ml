@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Conda
+.env/
+env/
+venv/
+matchmaking/
+
+# Data
+data/raw/
+data/processed/
+dataset_csv/
+
+# Models
+artifacts/
+models/
+*.pkl
+*.joblib
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
