@@ -3,6 +3,8 @@
 > **Can we predict whether a couple will last 10+ years?**
 > A full-stack ML project — from raw data exploration to a deployed API and interactive web app.
 
+🔗 **[Try the live app → matchmacking-ml.vercel.app](https://matchmacking-ml.vercel.app/)**
+
 ---
 
 ## 🎯 Project Objective
