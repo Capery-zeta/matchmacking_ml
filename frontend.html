@@ -19,7 +19,8 @@
       max-width: 960px;
       margin: 0 auto 20px auto;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
     }
     .lang-toggle {
       display: flex;
@@ -662,17 +663,13 @@
 </head>
 <body>
 
-  <!-- Language toggle -->
+  <!-- Top bar : language toggle (left) + ML button (right) -->
   <div class="lang-bar">
     <div class="lang-toggle">
       <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
       <button class="lang-btn"        id="btn-ja" onclick="setLang('ja')">日本語</button>
     </div>
-  </div>
-
-  <!-- ML button — shown below lang-bar on main page -->
-  <div id="btn-ml-wrap" style="text-align:center; margin-bottom:16px;">
-    <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link" data-i18n="ml_meta_link" style="margin:0 auto;">📊 Want to know the ML behind this?</button>
+    <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link" data-i18n="ml_meta_link" style="margin:0;">📊 Want to know the ML behind this?</button>
   </div>
 
   <!-- Back button — shown at top when on ML page, hidden otherwise -->
@@ -1315,7 +1312,6 @@
       const isML = mode === 'ml';
       document.querySelector('.mode-tabs').style.display       = isML ? 'none' : '';
       document.querySelector('.lang-bar').style.display        = isML ? 'none' : '';
-      document.getElementById('btn-ml-wrap').style.display     = isML ? 'none' : '';
       document.getElementById('btn-back-wrap').style.display   = isML ? 'block' : 'none';
       document.getElementById('result').style.display = 'none';
 
