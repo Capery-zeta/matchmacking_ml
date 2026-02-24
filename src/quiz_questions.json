@@ -1,0 +1,421 @@
+{
+  "_meta": {
+    "version": "1.1",
+    "description": "Quiz question bank for the Matchmaking Predictor. Each feature has 3 question variants (randomly assigned per person). Answer options carry deterministic scores: the same semantic answer always maps to the same numeric value regardless of which variant is shown. Scores follow the scale 0.1 / 0.3 / 0.5 / 0.7 / 0.9. Love language options map to one of the 5 categorical values used by the model.",
+    "score_scale": {
+      "0.1": "very low",
+      "0.3": "low",
+      "0.5": "medium",
+      "0.7": "high",
+      "0.9": "very high"
+    },
+    "variant_assignment": "Person A gets variant index 0 or 1; Person B gets a different index. Index is drawn randomly per feature at quiz init, guaranteeing A ≠ B for each feature."
+  },
+
+  "features": {
+
+    "career_ambition": {
+      "label": "Career Ambition",
+      "description": "How driven the person is professionally (0 = work-life balance first, 1 = career is top priority).",
+      "variants": [
+        {
+          "id": "ca_v1",
+          "question": "How does work fit into your daily life?",
+          "question_ja": "仕事はあなたの日常生活にどんな役割を果たしていますか？",
+          "options": [
+            { "label": "It's a source of stress I try to minimise",        "label_ja": "極力避けたいストレスの原因",                    "value": 0.1 },
+            { "label": "A necessary evil — I work to live",                "label_ja": "必要悪 — 生活のために働いている",               "value": 0.3 },
+            { "label": "Important, but not the centre of my life",         "label_ja": "重要だが、生活の中心ではない",                  "value": 0.5 },
+            { "label": "A major source of meaning and satisfaction",       "label_ja": "大きなやりがいと充実感の源",                    "value": 0.7 },
+            { "label": "My top priority — I live to excel professionally", "label_ja": "最優先事項 — プロとして輝くために生きている",    "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ca_v2",
+          "question": "Your employer offers a demanding promotion that would eat into your personal time. You…",
+          "question_ja": "会社から、プライベートな時間を犠牲にする厳しい昇進の話が来ました。あなたは…",
+          "options": [
+            { "label": "Turn it down without hesitation",                  "label_ja": "迷わず断る",                                    "value": 0.1 },
+            { "label": "Hesitate for a long time, then decline",           "label_ja": "長い間迷った末に断る",                          "value": 0.3 },
+            { "label": "Weigh the pros and cons carefully",                "label_ja": "メリット・デメリットを慎重に検討する",            "value": 0.5 },
+            { "label": "Probably accept — it's a great opportunity",       "label_ja": "素晴らしいチャンスなので、たぶん受ける",          "value": 0.7 },
+            { "label": "Jump at it immediately",                           "label_ja": "すぐに飛びつく",                                "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ca_v3",
+          "question": "Where do you see yourself professionally in 5 years?",
+          "question_ja": "5年後、仕事でどんな自分を想像していますか？",
+          "options": [
+            { "label": "Having more free time and less pressure",          "label_ja": "より多くの自由時間とプレッシャーの少ない生活",    "value": 0.1 },
+            { "label": "In a better work-life balance, same level",        "label_ja": "同じポジションで、ワークライフバランスが改善",    "value": 0.3 },
+            { "label": "Progressing gradually at my own pace",             "label_ja": "自分のペースで少しずつ前進している",              "value": 0.5 },
+            { "label": "In a significantly higher position",               "label_ja": "今よりもかなり上の立場にいる",                  "value": 0.7 },
+            { "label": "In a leadership or executive role",                "label_ja": "リーダーまたは経営幹部として活躍している",        "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ca_v4",
+          "question": "A colleague you admire quits their stable job to launch a startup. Your first reaction is…",
+          "question_ja": "尊敬する同僚が安定した仕事を辞めてスタートアップを立ち上げた。最初の反応は…",
+          "options": [
+            { "label": "Risky — I could never trade security for ambition",    "label_ja": "リスクが高い — 安定を野心と交換するなんて無理",  "value": 0.1 },
+            { "label": "Admirable, but not for me",                            "label_ja": "すごいとは思うが、自分には向いていない",          "value": 0.3 },
+            { "label": "Intriguing — I've occasionally daydreamed about it",   "label_ja": "面白い — たまに夢見たこともある",                "value": 0.5 },
+            { "label": "Inspiring — I'd seriously consider something similar", "label_ja": "刺激的 — 似たようなことを真剣に考えてみる",      "value": 0.7 },
+            { "label": "Exactly what I want to do someday",                    "label_ja": "いつか自分がやりたいことそのもの",               "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ca_v5",
+          "question": "What does a genuinely great week look like for you?",
+          "question_ja": "本当に充実した1週間とはどんな週ですか？",
+          "options": [
+            { "label": "Rest, fun, zero work stress — batteries fully recharged",  "label_ja": "休養、楽しみ、仕事のストレスゼロ — 完全充電",          "value": 0.1 },
+            { "label": "A calm week where work doesn't spill into evenings",       "label_ja": "仕事が夜まで持ち越されない、穏やかな週",               "value": 0.3 },
+            { "label": "A mix of solid work progress and good personal moments",   "label_ja": "仕事の進歩と良いプライベートが混在する週",              "value": 0.5 },
+            { "label": "Tangible career wins alongside some personal time",        "label_ja": "キャリアの成果と適度なプライベートが両立する週",        "value": 0.7 },
+            { "label": "Big professional breakthroughs, even if it was gruelling", "label_ja": "大きなプロの躍進 — たとえハードでも",                  "value": 0.9 }
+          ]
+        }
+      ]
+    },
+
+    "chronotype": {
+      "label": "Chronotype",
+      "description": "Natural sleep/wake preference (0 = night owl, 1 = early bird).",
+      "variants": [
+        {
+          "id": "ct_v1",
+          "question": "How would you describe yourself?",
+          "question_ja": "自分をどう表現しますか？",
+          "options": [
+            { "label": "A total night owl — I come alive after midnight",  "label_ja": "完全な夜型 — 深夜以降に本領発揮",                   "value": 0.1 },
+            { "label": "More of an evening person",                        "label_ja": "どちらかといえば夜のほうが元気",                     "value": 0.3 },
+            { "label": "Neither morning nor evening — it depends",         "label_ja": "朝型でも夜型でもない — 状況による",                  "value": 0.5 },
+            { "label": "More of a morning person",                         "label_ja": "どちらかといえば朝のほうが元気",                     "value": 0.7 },
+            { "label": "A convinced early bird — up before 6am happily",  "label_ja": "確信的な早起き — 6時前でも気持ちよく起きられる",     "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ct_v2",
+          "question": "On a free weekend with no obligations, what time do you naturally wake up?",
+          "question_ja": "何も予定がない自由な週末、自然に何時に起きますか？",
+          "options": [
+            { "label": "Noon or later",                                    "label_ja": "正午以降",                                          "value": 0.1 },
+            { "label": "Around 10am",                                      "label_ja": "10時ごろ",                                          "value": 0.3 },
+            { "label": "Between 8:30am and 10am",                          "label_ja": "8時半〜10時の間",                                   "value": 0.5 },
+            { "label": "Around 7:30am",                                    "label_ja": "7時半ごろ",                                         "value": 0.7 },
+            { "label": "Before 7am — I can't sleep in",                    "label_ja": "7時前 — 寝坊できない体質",                          "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ct_v3",
+          "question": "When are you most productive and sharp?",
+          "question_ja": "最も集中力が高く、頭が冴えるのはいつですか？",
+          "options": [
+            { "label": "After 9pm",                                        "label_ja": "21時以降",                                          "value": 0.1 },
+            { "label": "In the evening",                                   "label_ja": "夕方",                                              "value": 0.3 },
+            { "label": "Mid-afternoon",                                    "label_ja": "昼下がり",                                          "value": 0.5 },
+            { "label": "In the morning",                                   "label_ja": "午前中",                                            "value": 0.7 },
+            { "label": "Early morning — first thing",                      "label_ja": "早朝 — 起き抜けがベスト",                           "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ct_v4",
+          "question": "You have an important event at 7am on a Saturday. You…",
+          "question_ja": "土曜日の朝7時に重要なイベントがあります。あなたは…",
+          "options": [
+            { "label": "Dread it for days — mornings are genuinely painful",       "label_ja": "何日も前から憂鬱 — 朝は本当につらい",              "value": 0.1 },
+            { "label": "Set multiple alarms and feel rough until noon",            "label_ja": "アラームを何個もセットして昼まで頭が働かない",    "value": 0.3 },
+            { "label": "Manage fine, though you'd have preferred it later",        "label_ja": "なんとかこなせるが、もう少し遅ければ良かった",    "value": 0.5 },
+            { "label": "Handle it easily — you're usually up by then anyway",      "label_ja": "楽に対応できる — たいてい7時にはもう起きている",  "value": 0.7 },
+            { "label": "Are already awake and ready, with time to spare",          "label_ja": "時間があまって余裕で待機中、もうとっくに起きていた", "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ct_v5",
+          "question": "It's 10pm on a weeknight. You're…",
+          "question_ja": "平日の22時、あなたは…",
+          "options": [
+            { "label": "Wide awake — this is prime time, you're just getting started", "label_ja": "全開 — これからが本番、ちょうど始動し始めたところ",  "value": 0.1 },
+            { "label": "Energised and still doing things",                              "label_ja": "元気いっぱいで、まだいろいろやっている",            "value": 0.3 },
+            { "label": "Winding down — could go either way",                           "label_ja": "ダウン中 — そろそろ寝ようかどうか",                "value": 0.5 },
+            { "label": "Tired and heading to bed soon",                                "label_ja": "眠くてもうすぐ就寝",                               "value": 0.7 },
+            { "label": "Already asleep or fighting to keep your eyes open",            "label_ja": "もう寝ているか、目を開けているのがやっと",          "value": 0.9 }
+          ]
+        }
+      ]
+    },
+
+    "emotional_expressiveness": {
+      "label": "Emotional Expressiveness",
+      "description": "How openly the person shares their feelings (0 = reserved & private, 1 = openly expressive).",
+      "variants": [
+        {
+          "id": "ee_v1",
+          "question": "When you feel a strong emotion, you tend to…",
+          "question_ja": "強い感情を覚えたとき、あなたは…",
+          "options": [
+            { "label": "Keep it entirely to yourself",                     "label_ja": "完全に自分の中にしまっておく",                       "value": 0.1 },
+            { "label": "Rarely show it",                                   "label_ja": "めったに表に出さない",                               "value": 0.3 },
+            { "label": "Express it depending on the situation",            "label_ja": "状況によっては表現する",                             "value": 0.5 },
+            { "label": "Share it openly most of the time",                 "label_ja": "たいていの場合、素直に打ち明ける",                   "value": 0.7 },
+            { "label": "Express it spontaneously, always",                 "label_ja": "いつでも自然に感情を表す",                           "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ee_v2",
+          "question": "How would your close friends describe you emotionally?",
+          "question_ja": "親しい友人は、あなたのことを感情面でどう表現しますか？",
+          "options": [
+            { "label": "Very private and closed off",                      "label_ja": "とてもプライベートで心を開かない",                   "value": 0.1 },
+            { "label": "Rather reserved about feelings",                   "label_ja": "感情をあまり見せない、どちらかといえば内向き",       "value": 0.3 },
+            { "label": "Balanced — sometimes open, sometimes not",         "label_ja": "バランスが取れている — オープンなときもそうでないときも", "value": 0.5 },
+            { "label": "Quite expressive and open",                        "label_ja": "かなり表情豊かでオープン",                           "value": 0.7 },
+            { "label": "Very expressive — wear your heart on your sleeve", "label_ja": "とても感情豊か — 気持ちが顔に出る",                  "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ee_v3",
+          "question": "During a difficult conversation with a partner, you…",
+          "question_ja": "パートナーとの難しい会話のとき、あなたは…",
+          "options": [
+            { "label": "Shut down and withdraw",                           "label_ja": "黙って引きこもる",                                  "value": 0.1 },
+            { "label": "Share very little of what you feel",               "label_ja": "自分の気持ちをほとんど話さない",                     "value": 0.3 },
+            { "label": "Share some things, depending on how safe it feels","label_ja": "安心できると感じたときだけ少し話す",                 "value": 0.5 },
+            { "label": "Clearly express your feelings",                    "label_ja": "自分の気持ちをはっきり伝える",                       "value": 0.7 },
+            { "label": "Verbalise everything immediately and directly",    "label_ja": "すぐにすべてを率直に言葉にする",                     "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ee_v4",
+          "question": "Your partner does something that genuinely upsets you. Your default is to…",
+          "question_ja": "パートナーに本当に傷つけられたとき、あなたの第一反応は…",
+          "options": [
+            { "label": "Say nothing — process it alone and quietly move on",         "label_ja": "何も言わずに一人で消化して、静かに前に進む",             "value": 0.1 },
+            { "label": "Wait until it passes, then maybe mention it briefly",        "label_ja": "感情が落ち着いてから、軽く触れる程度",                 "value": 0.3 },
+            { "label": "Bring it up when the moment feels right",                    "label_ja": "タイミングが合ったときに切り出す",                     "value": 0.5 },
+            { "label": "Bring it up fairly quickly and explain how you felt",        "label_ja": "早めに話し、どう感じたか説明する",                     "value": 0.7 },
+            { "label": "Address it immediately and directly, even if uncomfortable", "label_ja": "たとえ不快でも、すぐに直接話し合う",                    "value": 0.9 }
+          ]
+        },
+        {
+          "id": "ee_v5",
+          "question": "You're at a gathering and someone shares something genuinely moving. You…",
+          "question_ja": "集まりで、誰かが本当に心を動かすことを話しています。あなたは…",
+          "options": [
+            { "label": "Feel it inside but show absolutely nothing outwardly",  "label_ja": "内心では感じているが、表には一切出さない",          "value": 0.1 },
+            { "label": "Stay composed, maybe a brief nod",                      "label_ja": "落ち着いたまま、せいぜい軽くうなずく程度",          "value": 0.3 },
+            { "label": "Show a little emotion depending on the company",        "label_ja": "周囲の雰囲気次第で少し感情を見せる",                "value": 0.5 },
+            { "label": "Openly show you're touched",                            "label_ja": "素直に感動を表す",                                  "value": 0.7 },
+            { "label": "React fully — you wear your emotions publicly",         "label_ja": "完全にリアクションする — 感情を公に示す",            "value": 0.9 }
+          ]
+        }
+      ]
+    },
+
+    "openness": {
+      "label": "Openness",
+      "description": "How curious and open to new experiences the person is (0 = prefers routine, 1 = adventurous & creative).",
+      "variants": [
+        {
+          "id": "op_v1",
+          "question": "Faced with an unfamiliar experience, you…",
+          "question_ja": "未知の体験と向き合ったとき、あなたは…",
+          "options": [
+            { "label": "Prefer to stay firmly in your comfort zone",       "label_ja": "コンフォートゾーンに留まることを強く好む",            "value": 0.1 },
+            { "label": "Hesitate a lot before trying",                     "label_ja": "試す前にとても迷う",                                 "value": 0.3 },
+            { "label": "Try it if someone you trust joins you",            "label_ja": "信頼できる人が一緒なら試す",                          "value": 0.5 },
+            { "label": "Accept willingly",                                 "label_ja": "喜んで受け入れる",                                   "value": 0.7 },
+            { "label": "Dive in enthusiastically",                         "label_ja": "熱意を持って飛び込む",                               "value": 0.9 }
+          ]
+        },
+        {
+          "id": "op_v2",
+          "question": "Your ideal holiday…",
+          "question_ja": "理想の休暇は…",
+          "options": [
+            { "label": "Same place, same habits, every year",              "label_ja": "毎年同じ場所、同じ過ごし方",                          "value": 0.1 },
+            { "label": "Known destination with few surprises",             "label_ja": "驚きの少ない、なじみのある場所",                      "value": 0.3 },
+            { "label": "Mix of familiar and new",                          "label_ja": "新しさと馴染みが半々",                               "value": 0.5 },
+            { "label": "New destination with a few familiar comforts",     "label_ja": "慣れた要素も少し混ぜながら新しい場所へ",              "value": 0.7 },
+            { "label": "Total adventure — unknown destination, no plan",   "label_ja": "完全な冒険 — 知らない場所、ノープラン",               "value": 0.9 }
+          ]
+        },
+        {
+          "id": "op_v3",
+          "question": "When you encounter a very original or unconventional idea…",
+          "question_ja": "とても独創的または型破りなアイデアに出会ったとき…",
+          "options": [
+            { "label": "You're sceptical and prefer tried-and-tested",     "label_ja": "懐疑的で、実績あるものを好む",                        "value": 0.1 },
+            { "label": "You wait to see how it plays out",                 "label_ja": "どう展開するか見極めてから判断する",                  "value": 0.3 },
+            { "label": "You listen and form your own opinion",             "label_ja": "話を聞いて自分なりの意見を持つ",                      "value": 0.5 },
+            { "label": "You find it stimulating",                          "label_ja": "刺激を受ける",                                       "value": 0.7 },
+            { "label": "You love it and want to be part of it",            "label_ja": "大好きで、関わりたいと思う",                          "value": 0.9 }
+          ]
+        },
+        {
+          "id": "op_v4",
+          "question": "You're at a restaurant and the only unfamiliar option is something you've never tried. You…",
+          "question_ja": "レストランで、一度も食べたことのないメニューしかないとき。あなたは…",
+          "options": [
+            { "label": "Order the safest, most familiar thing on the menu",           "label_ja": "メニューの中で最も無難で馴染みあるものを注文する",      "value": 0.1 },
+            { "label": "Pick something close to what you know",                       "label_ja": "知っているものに近いものを選ぶ",                        "value": 0.3 },
+            { "label": "Might try it if a friend orders it too",                      "label_ja": "友人が頼んだら自分も試してみるかも",                    "value": 0.5 },
+            { "label": "Order it — trying new food is part of the experience",        "label_ja": "注文する — 新しい食べ物を試すのも体験のうち",            "value": 0.7 },
+            { "label": "Always go for the most unfamiliar option without hesitation", "label_ja": "迷わず最も見知らぬものを選ぶ",                          "value": 0.9 }
+          ]
+        },
+        {
+          "id": "op_v5",
+          "question": "Someone challenges a belief you've held for a long time. You…",
+          "question_ja": "長年持ってきた信念に誰かが異議を唱えた。あなたは…",
+          "options": [
+            { "label": "Feel defensive and stand firm — your views are well-founded", "label_ja": "防御的になって立場を守る — 自分の見方には根拠がある",   "value": 0.1 },
+            { "label": "Listen politely but rarely update your position",             "label_ja": "礼儀正しく聞くが、ほとんど見解を変えない",             "value": 0.3 },
+            { "label": "Listen carefully and reflect before deciding",                "label_ja": "よく聞いて、決める前にじっくり考える",                 "value": 0.5 },
+            { "label": "Genuinely engage and sometimes change your mind",             "label_ja": "真剣に向き合い、ときに考えを変える",                   "value": 0.7 },
+            { "label": "Love it — being challenged is how you grow",                  "label_ja": "大好き — 挑戦されることで成長できる",                  "value": 0.9 }
+          ]
+        }
+      ]
+    },
+
+    "spontaneity": {
+      "label": "Spontaneity",
+      "description": "How much the person enjoys unplanned situations (0 = prefers to plan ahead, 1 = loves the last-minute).",
+      "variants": [
+        {
+          "id": "sp_v1",
+          "question": "What's your relationship with planning?",
+          "question_ja": "計画に対してどんな姿勢ですか？",
+          "options": [
+            { "label": "I need to organise everything well in advance",    "label_ja": "すべてをかなり前もって整理しておく必要がある",          "value": 0.1 },
+            { "label": "I prefer to plan but can adapt",                   "label_ja": "計画を立てるほうが好きだが、適応できる",               "value": 0.3 },
+            { "label": "A bit of both, depending on the situation",        "label_ja": "状況によって計画派と即興派が半々",                    "value": 0.5 },
+            { "label": "I rarely plan and often improvise",                "label_ja": "ほとんど計画せず、よく即興する",                      "value": 0.7 },
+            { "label": "I hate planning — I live in the moment",           "label_ja": "計画が嫌い — 今この瞬間を生きる",                     "value": 0.9 }
+          ]
+        },
+        {
+          "id": "sp_v2",
+          "question": "A friend calls at 6pm proposing a spontaneous road trip tonight. You…",
+          "question_ja": "友人が夕方6時に「今夜突然ロードトリップどう？」と電話してきた。あなたは…",
+          "options": [
+            { "label": "Refuse — that kind of thing needs planning",       "label_ja": "断る — そういうことは計画が必要",                     "value": 0.1 },
+            { "label": "Hesitate for a long time",                         "label_ja": "かなり迷う",                                         "value": 0.3 },
+            { "label": "Accept if it's easy to organise quickly",          "label_ja": "手早く準備できれば受け入れる",                        "value": 0.5 },
+            { "label": "Accept with pleasure",                             "label_ja": "喜んで受け入れる",                                   "value": 0.7 },
+            { "label": "Ask when you leave — you're already packing",      "label_ja": "「いつ出発？」と聞きながら、もうバッグを詰めている",   "value": 0.9 }
+          ]
+        },
+        {
+          "id": "sp_v3",
+          "question": "How does a typical day look for you?",
+          "question_ja": "あなたの普通の1日はどんな感じですか？",
+          "options": [
+            { "label": "Every day is planned in detail",                   "label_ja": "毎日が細かく計画されている",                          "value": 0.1 },
+            { "label": "You have a schedule you generally follow",         "label_ja": "だいたい守るスケジュールがある",                      "value": 0.3 },
+            { "label": "You alternate between organisation and improv",    "label_ja": "計画と即興を交互に使い分ける",                        "value": 0.5 },
+            { "label": "You improvise a lot",                              "label_ja": "かなり行き当たりばったり",                            "value": 0.7 },
+            { "label": "You have no fixed plan — ever",                    "label_ja": "固定のプランは一切ない",                              "value": 0.9 }
+          ]
+        },
+        {
+          "id": "sp_v4",
+          "question": "Your weekend plans get cancelled last minute. You feel…",
+          "question_ja": "週末の予定が直前にキャンセルになった。あなたの気持ちは…",
+          "options": [
+            { "label": "Stressed — you'll use the time to plan something structured", "label_ja": "焦る — その時間を使って何か構造的な予定を立てる",        "value": 0.1 },
+            { "label": "A bit lost without that structure",                           "label_ja": "その枠組みがなくなって少し途方に暮れる",                "value": 0.3 },
+            { "label": "Mildly inconvenienced but fine — you'll figure something out","label_ja": "少し不便だが大丈夫 — 何か考えるだろう",                 "value": 0.5 },
+            { "label": "Excited — a free stretch of time means freedom",              "label_ja": "ワクワクする — 自由な時間 = 自由",                      "value": 0.7 },
+            { "label": "Thrilled — no plans is the best possible plan",               "label_ja": "最高 — 無計画こそ最善の計画",                          "value": 0.9 }
+          ]
+        },
+        {
+          "id": "sp_v5",
+          "question": "How far in advance do you typically book trips, dinners, or activities?",
+          "question_ja": "旅行や食事、アクティビティを通常どのくらい前に予約しますか？",
+          "options": [
+            { "label": "Months ahead — I need everything confirmed early",          "label_ja": "何ヶ月も前 — 早めに全部確定させたい",                   "value": 0.1 },
+            { "label": "Several weeks — planning ahead gives me peace of mind",     "label_ja": "数週間前 — 計画しておくと安心する",                     "value": 0.3 },
+            { "label": "A week or two is usually fine",                             "label_ja": "1〜2週間前でたいてい大丈夫",                            "value": 0.5 },
+            { "label": "A few days before, sometimes the day of",                   "label_ja": "数日前、ときには当日",                                  "value": 0.7 },
+            { "label": "Rarely book in advance — I decide on the spot",             "label_ja": "ほとんど予約しない — その場で決める",                   "value": 0.9 }
+          ]
+        }
+      ]
+    },
+
+    "love_language": {
+      "label": "Love Language",
+      "description": "How the person primarily gives and receives love. Maps to one of 5 categorical values used by the model.",
+      "model_values": ["Acts of Service", "Physical Touch", "Quality Time", "Receiving Gifts", "Words of Affirmation"],
+      "variants": [
+        {
+          "id": "ll_v1",
+          "question": "What touches you most in a relationship?",
+          "question_ja": "恋愛で最も心に響くのは何ですか？",
+          "options": [
+            { "label": "When they handle something for me without being asked",   "label_ja": "何も言わずに何かをやってくれること",                    "value": "Acts of Service" },
+            { "label": "Physical closeness — hugs, holding hands, touch",         "label_ja": "身体的な近さ — ハグ、手をつなぐ、触れること",           "value": "Physical Touch" },
+            { "label": "Undivided quality time together, no distractions",        "label_ja": "スマホなどを脇において、二人だけの質の高い時間",         "value": "Quality Time" },
+            { "label": "Thoughtful gifts or little surprises",                    "label_ja": "心のこもったプレゼントやちょっとしたサプライズ",         "value": "Receiving Gifts" },
+            { "label": "Hearing that they love me, compliments and kind words",   "label_ja": "愛していると言葉で伝えてもらうこと、褒め言葉",           "value": "Words of Affirmation" }
+          ]
+        },
+        {
+          "id": "ll_v2",
+          "question": "You feel most loved when your partner…",
+          "question_ja": "パートナーに最も愛されていると感じるのは…",
+          "options": [
+            { "label": "Takes care of a practical problem on your behalf",        "label_ja": "あなたの代わりに実際的な問題を解決してくれるとき",       "value": "Acts of Service" },
+            { "label": "Holds you, cuddles you, is physically present",           "label_ja": "抱きしめてくれる、くっついてくれる、傍にいてくれるとき", "value": "Physical Touch" },
+            { "label": "Spends real focused time just with you",                  "label_ja": "あなただけに本当に集中した時間を一緒に過ごすとき",       "value": "Quality Time" },
+            { "label": "Surprises you with a gift they put thought into",         "label_ja": "心を込めたプレゼントで驚かせてくれるとき",               "value": "Receiving Gifts" },
+            { "label": "Tells you how much you mean to them",                     "label_ja": "どれだけ大切かを言葉で伝えてくれるとき",                 "value": "Words of Affirmation" }
+          ]
+        },
+        {
+          "id": "ll_v3",
+          "question": "Your natural way of showing love to someone you care about…",
+          "question_ja": "大切な人への愛情をあなたが自然に表す方法は…",
+          "options": [
+            { "label": "Doing practical things for them, making their life easier","label_ja": "相手の生活を楽にする実際的なことをする",               "value": "Acts of Service" },
+            { "label": "Lots of physical affection — hugs, touches",              "label_ja": "たくさんのスキンシップ — ハグや触れること",             "value": "Physical Touch" },
+            { "label": "Being fully present with them",                           "label_ja": "完全に相手のそばにいること",                           "value": "Quality Time" },
+            { "label": "Bringing them small gifts or surprises",                  "label_ja": "小さなプレゼントやサプライズを持ってくること",           "value": "Receiving Gifts" },
+            { "label": "Expressing your feelings with words",                     "label_ja": "気持ちを言葉で伝えること",                             "value": "Words of Affirmation" }
+          ]
+        },
+        {
+          "id": "ll_v4",
+          "question": "After a really hard day, what would make you feel most supported?",
+          "question_ja": "本当につらい日の後、最も支えられていると感じるのは…",
+          "options": [
+            { "label": "Your partner quietly handling something practical for you",   "label_ja": "パートナーが黙って何か実際的なことをやってくれるとき",   "value": "Acts of Service" },
+            { "label": "A long hug and just being held",                             "label_ja": "長いハグ、ただ抱きしめてもらうこと",                   "value": "Physical Touch" },
+            { "label": "Sitting together and truly talking through your day",        "label_ja": "一緒に座ってその日のことを本当に話し合うこと",           "value": "Quality Time" },
+            { "label": "Finding a small treat or gift they picked up for you",       "label_ja": "パートナーがそっと用意してくれた小さなサプライズ",       "value": "Receiving Gifts" },
+            { "label": "Hearing that they're proud of you and believe in you",       "label_ja": "あなたを誇りに思う、信じていると言葉で聞かせてもらうこと","value": "Words of Affirmation" }
+          ]
+        },
+        {
+          "id": "ll_v5",
+          "question": "What kind of memory with a partner stays with you the longest?",
+          "question_ja": "パートナーとの思い出で、最も長く残るのはどんな瞬間ですか？",
+          "options": [
+            { "label": "The times they quietly fixed something to make your life easier",   "label_ja": "生活を楽にするために黙って何かをしてくれた瞬間",         "value": "Acts of Service" },
+            { "label": "Moments of warmth and physical closeness",                         "label_ja": "温もりと身体的な近さの瞬間",                           "value": "Physical Touch" },
+            { "label": "A whole day together, fully present, no phones",                   "label_ja": "スマホなしで、まるごと一緒に過ごした一日",               "value": "Quality Time" },
+            { "label": "A gift that proved they'd really been listening",                   "label_ja": "本当によく聞いていてくれたと証明するプレゼント",         "value": "Receiving Gifts" },
+            { "label": "Something kind they said that you still think about",              "label_ja": "今でも思い出す、相手が言ってくれた優しい言葉",           "value": "Words of Affirmation" }
+          ]
+        }
+      ]
+    }
+
+  }
+}

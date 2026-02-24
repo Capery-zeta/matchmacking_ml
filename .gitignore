@@ -14,11 +14,12 @@ data/raw/
 data/processed/
 dataset_csv/
 
-# Models
+# Models (on exclut tout sauf le modèle de prod)
 artifacts/
-models/
-*.pkl
-*.joblib
+src/models/lgbm_final.pkl
+
+# Data (trop lourd)
+src/data/
 
 # Logs
 logs/

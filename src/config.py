@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
 # Data paths
-RAW_DATA_PATH = ROOT_DIR / "data" / "raw" / "matchmaking_dataset.csv"
+RAW_DATA_PATH = ROOT_DIR / "src" / "data" / "raw" / "matchmaking_dataset.csv"
 
 # Target
 TARGET_COLUMN = "relationship_longevity_months"
