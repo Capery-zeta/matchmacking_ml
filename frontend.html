@@ -239,20 +239,60 @@
     .ml-cta-btn:hover { background: #3d444d; }
 
     /* ── ML meta link ── */
+    /* Floating ML button */
     .ml-meta-link {
-      background: none;
+      position: fixed;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #5a2d9c;
+      color: white;
       border: none;
-      color: #9b72d4;
-      font-size: 0.85rem;
-      font-weight: 600;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: color 0.18s, background 0.18s;
-      letter-spacing: 0.01em;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      padding: 18px 10px;
+      border-radius: 12px 0 0 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      box-shadow: -2px 0 16px rgba(90,45,156,0.25);
+      transition: background 0.18s, box-shadow 0.18s;
+      z-index: 100;
     }
-    .ml-meta-link:hover { color: #5a2d9c; background: #f0e8ff; }
-    .ml-meta-link.active { color: #5a2d9c; }
+    .ml-meta-link:hover { background: #7b4cc7; box-shadow: -3px 0 20px rgba(90,45,156,0.35); }
+
+    /* ── Mobile responsive ── */
+    @media (max-width: 600px) {
+      .person-header {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .person-header > :first-child { display: none; } /* cache le label vide central */
+
+      .row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .row .trait-info {
+        grid-column: 1 / -1;
+        order: -1;
+        border-bottom: 1px solid #f0e8ff;
+        padding-bottom: 8px;
+        margin-bottom: 4px;
+      }
+      .row.select-row {
+        grid-template-columns: 1fr 1fr;
+      }
+      .row.select-row .trait-info {
+        grid-column: 1 / -1;
+        order: -1;
+      }
+      .card { padding: 16px; }
+      .mode-tabs { gap: 4px; }
+      .mode-tab { padding: 8px 14px; font-size: 0.8rem; }
+      .ml-meta-link { font-size: 0.7rem; padding: 14px 8px; }
+    }
 
     /* ── Mode tabs ── */
     .mode-tabs {
@@ -618,10 +658,8 @@
   <h1 data-i18n="title">💜 Matchmaking Predictor</h1>
   <p class="subtitle" data-i18n="subtitle">Will this relationship last 10 years or more? (~0.9% of couples do)</p>
 
-  <!-- ML Analysis link -->
-  <div style="text-align:center;margin-bottom:22px;">
-    <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link" data-i18n="ml_meta_link">📊 Curious about the ML behind this? →</button>
-  </div>
+  <!-- ML Analysis floating button -->
+  <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link" data-i18n="ml_meta_link">📊 ML Analysis</button>
 
   <!-- Mode tabs -->
   <div class="mode-tabs">
@@ -1258,7 +1296,7 @@
       document.getElementById('tab-ml').classList.toggle('active',    mode === 'ml');
       // Hide the functional tabs and the ML link when on the ML page, show them otherwise
       document.querySelector('.mode-tabs').style.display  = mode === 'ml' ? 'none' : '';
-      document.querySelector('.ml-meta-link').parentElement.style.display = mode === 'ml' ? 'none' : '';
+      document.getElementById('tab-ml').style.display = mode === 'ml' ? 'none' : '';
       document.getElementById('result').style.display = 'none';
 
       if (mode === 'quiz') {
