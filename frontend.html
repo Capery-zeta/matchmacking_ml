@@ -57,6 +57,187 @@
       font-size: 0.95rem;
     }
 
+    /* ── ML Analysis page ── */
+    #mode-ml { display: none; }
+    .ml-hero {
+      background: linear-gradient(135deg, #5a2d9c 0%, #8b5cf6 100%);
+      border-radius: 20px;
+      padding: 40px 36px 32px;
+      max-width: 960px;
+      margin: 0 auto 28px auto;
+      color: white;
+      text-align: center;
+    }
+    .ml-hero h2 { font-size: 1.65rem; margin-bottom: 10px; font-weight: 800; }
+    .ml-hero p  { font-size: 0.97rem; opacity: 0.88; max-width: 600px; margin: 0 auto 28px; line-height: 1.6; }
+    .ml-stats {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .ml-stat {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 14px;
+      padding: 14px 22px;
+      min-width: 120px;
+      backdrop-filter: blur(4px);
+    }
+    .ml-stat-value { font-size: 1.7rem; font-weight: 800; display: block; }
+    .ml-stat-label { font-size: 0.73rem; opacity: 0.82; margin-top: 3px; display: block; letter-spacing: 0.03em; text-transform: uppercase; }
+
+    .ml-section-title {
+      max-width: 960px;
+      margin: 0 auto 16px auto;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #5a2d9c;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ml-section-title::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(to right, #e0d0f8, transparent);
+      border-radius: 2px;
+    }
+
+    /* Notebook timeline */
+    .ml-timeline {
+      max-width: 960px;
+      margin: 0 auto 32px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .ml-step {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(90,45,156,0.07);
+      border: 1.5px solid #ede8fa;
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.18s, border-color 0.18s;
+    }
+    .ml-step:hover { box-shadow: 0 4px 20px rgba(90,45,156,0.13); border-color: #c4aef0; }
+    .ml-step-header {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      gap: 16px;
+    }
+    .ml-step-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #5a2d9c, #8b5cf6);
+      color: white;
+      font-weight: 800;
+      font-size: 0.88rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ml-step-num.optional {
+      background: linear-gradient(135deg, #b0b0b0, #d0d0d0);
+    }
+    .ml-step-meta { flex: 1; }
+    .ml-step-title { font-weight: 700; font-size: 0.97rem; color: #2d2d2d; }
+    .ml-step-subtitle { font-size: 0.77rem; color: #999; margin-top: 2px; }
+    .ml-step-badge {
+      background: #f0e8ff;
+      color: #5a2d9c;
+      border-radius: 50px;
+      padding: 4px 12px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .ml-step-badge.green { background: #e6f9f0; color: #1a7a4a; }
+    .ml-step-badge.amber { background: #fff5e0; color: #a06000; }
+    .ml-step-badge.grey  { background: #f2f2f2; color: #777; }
+    .ml-step-chevron { color: #ccc; font-size: 0.85rem; margin-left: 8px; flex-shrink: 0; transition: transform 0.2s; }
+    .ml-step.open .ml-step-chevron { transform: rotate(180deg); }
+
+    .ml-step-body {
+      display: none;
+      padding: 0 20px 20px 72px;
+      border-top: 1px solid #f0e8ff;
+    }
+    .ml-step.open .ml-step-body { display: block; }
+    .ml-step-body p { font-size: 0.88rem; color: #555; line-height: 1.65; margin-bottom: 10px; }
+    .ml-step-body p:last-child { margin-bottom: 0; }
+    .ml-step-body .highlight {
+      background: #f5f0ff;
+      border-left: 3px solid #5a2d9c;
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #3d1f6e;
+      line-height: 1.55;
+    }
+    .ml-step-body .highlight strong { color: #5a2d9c; }
+
+    /* Key decisions card */
+    .ml-decisions {
+      max-width: 960px;
+      margin: 0 auto 28px auto;
+      background: white;
+      border-radius: 16px;
+      padding: 28px 32px;
+      box-shadow: 0 2px 16px rgba(90,45,156,0.08);
+    }
+    .ml-decisions h3 { font-size: 1rem; font-weight: 700; color: #5a2d9c; margin-bottom: 16px; }
+    .ml-decision-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f5f0ff;
+    }
+    .ml-decision-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .ml-decision-icon { font-size: 1.3rem; flex-shrink: 0; padding-top: 2px; }
+    .ml-decision-text { font-size: 0.88rem; color: #444; line-height: 1.55; }
+    .ml-decision-text strong { color: #2d2d2d; }
+
+    /* GitHub CTA */
+    .ml-cta {
+      max-width: 960px;
+      margin: 0 auto 32px auto;
+      background: white;
+      border-radius: 16px;
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 16px rgba(90,45,156,0.08);
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .ml-cta-text { font-size: 0.95rem; color: #555; }
+    .ml-cta-text strong { color: #2d2d2d; font-size: 1rem; display: block; margin-bottom: 4px; }
+    .ml-cta-btn {
+      background: #24292f;
+      color: white;
+      border: none;
+      padding: 11px 24px;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .ml-cta-btn:hover { background: #3d444d; }
+
     /* ── Mode tabs ── */
     .mode-tabs {
       max-width: 960px;
@@ -426,6 +607,7 @@
     <button class="mode-tab active" id="tab-ai"     onclick="setMode('ai')"     data-i18n="tab_ai">🤖 AI</button>
     <button class="mode-tab"        id="tab-quiz"   onclick="setMode('quiz')"   data-i18n="tab_quiz">🎯 Quiz</button>
     <button class="mode-tab"        id="tab-manual" onclick="setMode('manual')" data-i18n="tab_manual">🎚️ Manual</button>
+    <button class="mode-tab"        id="tab-ml"     onclick="setMode('ml')">📊 ML Analysis</button>
   </div>
 
   <!-- ══ AI MODE (coming soon) ═══════════════════════════════════════════════ -->
@@ -609,6 +791,211 @@
       <div class="quiz-loading" data-i18n="quiz_loading">Loading questions…</div>
     </div>
   </div>
+
+  <!-- ══ ML ANALYSIS PAGE ════════════════════════════════════════════════════ -->
+  <div id="mode-ml">
+
+    <!-- Hero -->
+    <div class="ml-hero">
+      <h2>📊 Behind the Prediction</h2>
+      <p>This app is powered by a machine learning model trained to predict long-lasting relationships.
+         Here's the full analytical journey — from raw data to production model.</p>
+      <div class="ml-stats">
+        <div class="ml-stat">
+          <span class="ml-stat-value">0.75</span>
+          <span class="ml-stat-label">AUC — final model</span>
+        </div>
+        <div class="ml-stat">
+          <span class="ml-stat-value">6</span>
+          <span class="ml-stat-label">Features selected</span>
+        </div>
+        <div class="ml-stat">
+          <span class="ml-stat-value">10 yrs</span>
+          <span class="ml-stat-label">Longevity threshold</span>
+        </div>
+        <div class="ml-stat">
+          <span class="ml-stat-value">8</span>
+          <span class="ml-stat-label">Notebooks</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline section -->
+    <div class="ml-section-title">🔬 The ML Pipeline — Step by Step</div>
+    <div class="ml-timeline">
+
+      <!-- Step 01 -->
+      <div class="ml-step" onclick="toggleStep(this)">
+        <div class="ml-step-header">
+          <div class="ml-step-num">01</div>
+          <div class="ml-step-meta">
+            <div class="ml-step-title">Data Audit</div>
+            <div class="ml-step-subtitle">data_audit.ipynb</div>
+          </div>
+          <div class="ml-step-badge grey">Exploration</div>
+          <div class="ml-step-chevron">▼</div>
+        </div>
+        <div class="ml-step-body">
+          <p>Initial deep-dive into the raw dataset: column types, distributions, missing values, and target variable analysis. This step established the data quality baseline and guided all downstream decisions.</p>
+          <div class="highlight">Key finding: the target variable (relationship duration) is highly skewed — very few couples reach 10+ years, which motivated using <strong>class_weight="balanced"</strong> throughout modeling.</div>
+        </div>
+      </div>
+
+      <!-- Step 02 -->
+      <div class="ml-step" onclick="toggleStep(this)">
+        <div class="ml-step-header">
+          <div class="ml-step-num">02</div>
+          <div class="ml-step-meta">
+            <div class="ml-step-title">Feature Engineering</div>
+            <div class="ml-step-subtitle">features_engineering.ipynb</div>
+          </div>
+          <div class="ml-step-badge">Engineering</div>
+          <div class="ml-step-chevron">▼</div>
+        </div>
+        <div class="ml-step-body">
+          <p>Raw personality scores from both partners were transformed into <strong>relational features</strong> — measures of compatibility and difference rather than individual traits. This is the core hypothesis: it's not who you are individually, it's how you fit together.</p>
+          <div class="highlight">Examples: absolute difference in emotional expressiveness, same/different love language flag, compatibility score on openness. These became the model's input space.</div>
+        </div>
+      </div>
+
+      <!-- Step 03 -->
+      <div class="ml-step" onclick="toggleStep(this)">
+        <div class="ml-step-header">
+          <div class="ml-step-num">03</div>
+          <div class="ml-step-meta">
+            <div class="ml-step-title">Modeling — Regression Benchmark</div>
+            <div class="ml-step-subtitle">modeling_longevity_monthly_target.ipynb</div>
+          </div>
+          <div class="ml-step-badge amber">Dead end → pivot</div>
+          <div class="ml-step-chevron">▼</div>
+        </div>
+        <div class="ml-step-body">
+          <p>First attempt: predict the exact duration of the relationship in months (regression). Multiple algorithms were benchmarked — Linear Regression, Ridge, Random Forest, LightGBM.</p>
+          <div class="highlight"><strong>Result: R² ≈ 0.11, MAE ≈ 1 year.</strong> Models barely explained variance — predicting an exact duration is too noisy. Decision: reformulate as binary classification (will this couple last 10+ years, yes or no?).</div>
+        </div>
+      </div>
+
+      <!-- Step 04 -->
+      <div class="ml-step" onclick="toggleStep(this)">
+        <div class="ml-step-header">
+          <div class="ml-step-num">04</div>
+          <div class="ml-step-meta">
+            <div class="ml-step-title">Modeling — Binary Classification</div>
+            <div class="ml-step-subtitle">modeling_longevity_binary_target.ipynb</div>
+          </div>
+          <div class="ml-step-badge green">✓ Production model chosen</div>
+          <div class="ml-step-chevron">▼</div>
+        </div>
+        <div class="ml-step-body">
+          <p>The problem was reframed: predict whether a relationship will last <strong>10 years or more</strong> (binary yes/no). A full model comparison was run: Logistic Regression, Decision Tree, Random Forest, LightGBM — all with <code>class_weight="balanced"</code> to handle class imbalance.</p>
+          <div class="highlight"><strong>Winner: Logistic Regression (AUC = 0.75).</strong> Counter-intuitively, the simpler linear model outperformed tree-based methods — likely because the signal is genuinely linear on this small, noisy dataset. Interpretability as a bonus.</div>
+        </div>
+      </div>
+
+      <!-- Step 05 -->
+      <div class="ml-step" onclick="toggleStep(this)">
+        <div class="ml-step-header">
+          <div class="ml-step-num">05</div>
+          <div class="ml-step-meta">
+            <div class="ml-step-title">Feature Importance — SHAP Analysis</div>
+            <div class="ml-step-subtitle">feature_importance.ipynb</div>
+          </div>
+          <div class="ml-step-badge">Interpretability</div>
+          <div class="ml-step-chevron">▼</div>
+        </div>
+        <div class="ml-step-body">
+          <p>SHAP (SHapley Additive exPlanations) values were computed to understand <em>why</em> the model makes each prediction, and which features actually drive the outcome.</p>
+          <div class="highlight">Features near-zero SHAP contribution were flagged as candidates for removal. This gave a human-readable ranking of what compatibility factors matter most — and which are noise.</div>
+        </div>
+      </div>
+
+      <!-- Step 06 -->
+      <div class="ml-step" onclick="toggleStep(this)">
+        <div class="ml-step-header">
+          <div class="ml-step-num">06</div>
+          <div class="ml-step-meta">
+            <div class="ml-step-title">Feature Selection — Sequential Backward Elimination</div>
+            <div class="ml-step-subtitle">optimize_feature_selection.ipynb</div>
+          </div>
+          <div class="ml-step-badge green">6 features retained</div>
+          <div class="ml-step-chevron">▼</div>
+        </div>
+        <div class="ml-step-body">
+          <p>Rather than relying on SHAP alone, a more rigorous <strong>Sequential Backward Elimination</strong> approach was applied: iteratively remove the least useful feature and measure the impact on AUC. This gives a holistic view rather than feature-by-feature inspection.</p>
+          <div class="highlight"><strong>Result: 6 features retained</strong> out of the full engineered set — with no AUC degradation. Fewer features = simpler model, less overfitting, and easier to interpret for the end user.</div>
+        </div>
+      </div>
+
+      <!-- Step 07 -->
+      <div class="ml-step" onclick="toggleStep(this)">
+        <div class="ml-step-header">
+          <div class="ml-step-num">07</div>
+          <div class="ml-step-meta">
+            <div class="ml-step-title">Model Export</div>
+            <div class="ml-step-subtitle">model_export.ipynb</div>
+          </div>
+          <div class="ml-step-badge green">✓ Deployed</div>
+          <div class="ml-step-chevron">▼</div>
+        </div>
+        <div class="ml-step-body">
+          <p>The final production pipeline — <strong>StandardScaler + Logistic Regression</strong> — was retrained on the full dataset (not just the train split) using the 6 selected features, then serialized to disk.</p>
+          <div class="highlight">This <code>.pkl</code> file is what the FastAPI backend loads at startup to serve real-time predictions. The pipeline handles scaling automatically, so the API just receives raw scores.</div>
+        </div>
+      </div>
+
+      <!-- Step 08 -->
+      <div class="ml-step" onclick="toggleStep(this)">
+        <div class="ml-step-header">
+          <div class="ml-step-num optional">08</div>
+          <div class="ml-step-meta">
+            <div class="ml-step-title">Paired Category Features <em style="font-weight:400;color:#aaa">(optional)</em></div>
+            <div class="ml-step-subtitle">paired_features.ipynb</div>
+          </div>
+          <div class="ml-step-badge grey">Exploration</div>
+          <div class="ml-step-chevron">▼</div>
+        </div>
+        <div class="ml-step-body">
+          <p>An experimental notebook exploring whether <strong>specific pair combinations</strong> of categorical features (e.g. "Quality Time × Acts of Service" as a single feature) provide richer signal than simple binary same/different flags.</p>
+          <div class="highlight">Hypothesis: two people with the same love language isn't the same as knowing which specific combo they share. This adds granularity — not yet in production but a promising extension.</div>
+        </div>
+      </div>
+
+    </div><!-- /timeline -->
+
+    <!-- Key modelling decisions -->
+    <div class="ml-section-title">🧠 Key Modelling Decisions</div>
+    <div class="ml-decisions">
+      <div class="ml-decision-row">
+        <div class="ml-decision-icon">🔄</div>
+        <div class="ml-decision-text"><strong>Regression → Classification</strong> — Predicting exact duration in months proved too noisy (R² = 0.11). Reformulating as binary "10-year threshold" gave meaningful, actionable signal.</div>
+      </div>
+      <div class="ml-decision-row">
+        <div class="ml-decision-icon">⚖️</div>
+        <div class="ml-decision-text"><strong>Class imbalance handling</strong> — Long-lasting couples are rare in the data. Using <code>class_weight="balanced"</code> prevented the model from simply predicting "no" for everyone.</div>
+      </div>
+      <div class="ml-decision-row">
+        <div class="ml-decision-icon">🏆</div>
+        <div class="ml-decision-text"><strong>Why Logistic Regression beat LightGBM</strong> — On a small, noisy, relationship dataset, simpler linear models generalize better. Tree models overfit to noise that linear models ignore.</div>
+      </div>
+      <div class="ml-decision-row">
+        <div class="ml-decision-icon">✂️</div>
+        <div class="ml-decision-text"><strong>Feature reduction without accuracy loss</strong> — Sequential Backward Elimination reduced the feature space from ~15 to 6 with zero AUC impact. Simpler model, cleaner UX, less maintenance.</div>
+      </div>
+    </div>
+
+    <!-- GitHub CTA -->
+    <div class="ml-cta">
+      <div class="ml-cta-text">
+        <strong>📂 Full code &amp; notebooks on GitHub</strong>
+        All 8 notebooks with outputs, the FastAPI backend, and deployment config are open source.
+      </div>
+      <a class="ml-cta-btn" href="https://github.com/Capery-zeta/matchmacking_ml" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.929.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        View on GitHub
+      </a>
+    </div>
+
+  </div><!-- /mode-ml -->
 
   <!-- ══ RESULTS (shared) ═════════════════════════════════════════════════════ -->
   <div id="result">
@@ -842,9 +1229,11 @@
       document.getElementById('mode-ai').style.display     = mode === 'ai'     ? 'block' : 'none';
       document.getElementById('mode-quiz').style.display   = mode === 'quiz'   ? 'block' : 'none';
       document.getElementById('mode-manual').style.display = mode === 'manual' ? 'block' : 'none';
+      document.getElementById('mode-ml').style.display     = mode === 'ml'     ? 'block' : 'none';
       document.getElementById('tab-ai').classList.toggle('active',     mode === 'ai');
       document.getElementById('tab-quiz').classList.toggle('active',   mode === 'quiz');
       document.getElementById('tab-manual').classList.toggle('active', mode === 'manual');
+      document.getElementById('tab-ml').classList.toggle('active',     mode === 'ml');
       document.getElementById('result').style.display = 'none';
 
       if (mode === 'quiz') {
@@ -1297,6 +1686,10 @@
       }
 
       resultDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+    // ── ML Analysis — accordion toggle ───────────────────────────────────────
+    function toggleStep(el) {
+      el.classList.toggle('open');
     }
   </script>
 
