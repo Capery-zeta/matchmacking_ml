@@ -670,20 +670,24 @@
     </div>
   </div>
 
+  <!-- ML button — shown below lang-bar on main page -->
+  <div id="btn-ml-wrap" style="text-align:center; margin-bottom:16px;">
+    <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link" data-i18n="ml_meta_link" style="margin:0 auto;">📊 Want to know the ML behind this?</button>
+  </div>
+
+  <!-- Back button — shown at top when on ML page, hidden otherwise -->
+  <div id="btn-back-wrap" style="max-width:960px; margin:0 auto 16px auto; display:none;">
+    <button onclick="setMode('ai')" class="ml-meta-link" data-i18n="ml_back" style="margin:0;">← Back to the app</button>
+  </div>
+
   <h1 data-i18n="title">💜 Matchmaking Predictor</h1>
   <p class="subtitle" data-i18n="subtitle">Will this relationship last 10 years or more? (~0.9% of couples do)</p>
 
-  <!-- Mode tabs + ML button on same row -->
-  <div class="tabs-row">
-    <div class="tabs-row-spacer"></div>
-    <div class="mode-tabs">
-      <button class="mode-tab active" id="tab-ai"     onclick="setMode('ai')"     data-i18n="tab_ai">🤖 AI</button>
-      <button class="mode-tab"        id="tab-quiz"   onclick="setMode('quiz')"   data-i18n="tab_quiz">🎯 Quiz</button>
-      <button class="mode-tab"        id="tab-manual" onclick="setMode('manual')" data-i18n="tab_manual">🎚️ Manual</button>
-    </div>
-    <div class="tabs-row-right">
-      <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link" data-i18n="ml_meta_link">📊 Want to know the ML behind this?</button>
-    </div>
+  <!-- Mode tabs -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tab-ai"     onclick="setMode('ai')"     data-i18n="tab_ai">🤖 AI</button>
+    <button class="mode-tab"        id="tab-quiz"   onclick="setMode('quiz')"   data-i18n="tab_quiz">🎯 Quiz</button>
+    <button class="mode-tab"        id="tab-manual" onclick="setMode('manual')" data-i18n="tab_manual">🎚️ Manual</button>
   </div>
 
   <!-- ══ AI MODE (coming soon) ═══════════════════════════════════════════════ -->
@@ -870,11 +874,6 @@
 
   <!-- ══ ML ANALYSIS PAGE ════════════════════════════════════════════════════ -->
   <div id="mode-ml">
-
-    <!-- Back button — left aligned -->
-    <div style="max-width:960px;margin:0 auto 16px auto;">
-      <button onclick="setMode('ai')" class="ml-meta-link" data-i18n="ml_back" style="margin:0;">← Back to the app</button>
-    </div>
 
     <!-- Hero -->
     <div class="ml-hero">
@@ -1312,9 +1311,12 @@
       document.getElementById('tab-quiz').classList.toggle('active',  mode === 'quiz');
       document.getElementById('tab-manual').classList.toggle('active',mode === 'manual');
       document.getElementById('tab-ml').classList.toggle('active',    mode === 'ml');
-      // Hide tabs row (mode tabs + ML button) and language toggle when on the ML page
-      document.querySelector('.tabs-row').style.display    = mode === 'ml' ? 'none' : '';
-      document.querySelector('.lang-bar').style.display    = mode === 'ml' ? 'none' : '';
+      // On ML page: hide mode tabs, lang toggle, ML button — show Back button instead
+      const isML = mode === 'ml';
+      document.querySelector('.mode-tabs').style.display       = isML ? 'none' : '';
+      document.querySelector('.lang-bar').style.display        = isML ? 'none' : '';
+      document.getElementById('btn-ml-wrap').style.display     = isML ? 'none' : '';
+      document.getElementById('btn-back-wrap').style.display   = isML ? 'block' : 'none';
       document.getElementById('result').style.display = 'none';
 
       if (mode === 'quiz') {
