@@ -5,6 +5,8 @@
 
 🔗 **[Try the live app → matchmacking-ml.vercel.app](https://matchmacking-ml.vercel.app/)**
 
+> ⚠️ **Disclaimer** — This project is built on a **synthetic dataset** ([Cupid's Algorithm — Kaggle](https://www.kaggle.com/datasets/likithagedipudi/cupids-algorithm)) and is intended as a **portfolio / technical demonstration**, not a scientifically validated tool. Predictions are illustrative and should not be taken at face value.
+
 ---
 
 ## 🎯 Project Objective
