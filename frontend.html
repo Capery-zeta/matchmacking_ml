@@ -256,39 +256,7 @@
     .ml-meta-link:hover { background: #ddd6fe; border-color: #6d28d9; }
     .ml-meta-link.active { background: #ddd6fe; border-color: #6d28d9; }
 
-    /* ── Mobile responsive ── */
-    @media (max-width: 600px) {
-      /* Person header : "Person A" | "Person B" côte à côte, sans colonne centrale */
-      .person-header {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-      }
-      .person-header > :nth-child(2) { display: none; } /* cache la colonne centrale vide */
-
-      /* Chaque ligne de trait : label en haut pleine largeur, sliders A + B côte à côte en dessous */
-      .row {
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-          "info info"
-          "a    b";
-        gap: 8px;
-      }
-      .row > :nth-child(1) { grid-area: a; }   /* slider A */
-      .row > :nth-child(2) { grid-area: info; border-bottom: 1px solid #f0e8ff; padding-bottom: 8px; } /* trait info */
-      .row > :nth-child(3) { grid-area: b; }   /* slider B */
-
-      /* Même logique pour les selects (love language) */
-      .row.select-row {
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-          "info info"
-          "a    b";
-      }
-
-      .card { padding: 16px; }
-      .mode-tabs { gap: 4px; }
-      .mode-tab { padding: 8px 14px; font-size: 0.8rem; }
-    }
+    /* ── Mobile responsive — moved to end of CSS to properly override desktop rules ── */
 
     /* ── Mode tabs ── */
     .mode-tabs {
@@ -599,7 +567,7 @@
       margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.04em;
     }
     .contrib-row {
-      display: grid; grid-template-columns: 180px 1fr 60px;
+      display: grid; grid-template-columns: 180px 1fr;
       align-items: center; gap: 10px; margin-bottom: 10px;
     }
     .contrib-label {
@@ -639,6 +607,57 @@
     }
     .kaggle-ref a { color: #5a2d9c; text-decoration: none; font-weight: 600; }
     .kaggle-ref a:hover { text-decoration: underline; }
+
+    /* ── Tabs row : mode tabs centered + ML button on right ── */
+    .tabs-row {
+      max-width: 960px;
+      margin: 0 auto 24px auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .tabs-row-spacer { flex: 1; min-width: 0; }
+    .tabs-row-right  { flex: 1; min-width: 0; display: flex; justify-content: flex-end; }
+    .tabs-row .mode-tabs { margin: 0; }
+    .tabs-row .ml-meta-link { margin: 0; white-space: nowrap; }
+
+    /* ── Mobile responsive — must come AFTER desktop rules to properly override ── */
+    @media (max-width: 600px) {
+      /* Person header : "Person A" | "Person B" côte à côte, sans colonne centrale */
+      .person-header {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .person-header > :nth-child(2) { display: none; } /* cache la colonne centrale vide */
+
+      /* Chaque ligne de trait : label en haut pleine largeur, sliders A + B côte à côte en dessous */
+      .row {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "info info"
+          "a    b";
+        gap: 8px;
+      }
+      .row > :nth-child(1) { grid-area: a; }   /* slider A */
+      .row > :nth-child(2) { grid-area: info; border-bottom: 1px solid #f0e8ff; padding-bottom: 8px; } /* trait info */
+      .row > :nth-child(3) { grid-area: b; }   /* slider B */
+
+      /* Même logique pour les selects (love language) */
+      .row.select-row {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "info info"
+          "a    b";
+      }
+
+      .card { padding: 16px; }
+      .mode-tab { padding: 8px 14px; font-size: 0.8rem; }
+
+      /* Tabs row on mobile: spacer hidden, ML button centered */
+      .tabs-row { flex-wrap: wrap; justify-content: center; }
+      .tabs-row-spacer { display: none; }
+      .tabs-row-right  { flex: unset; justify-content: center; }
+    }
   </style>
 </head>
 <body>
@@ -654,14 +673,17 @@
   <h1 data-i18n="title">💜 Matchmaking Predictor</h1>
   <p class="subtitle" data-i18n="subtitle">Will this relationship last 10 years or more? (~0.9% of couples do)</p>
 
-  <!-- ML Analysis button — above main tabs -->
-  <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link" data-i18n="ml_meta_link">📊 Want to know the ML behind this?</button>
-
-  <!-- Mode tabs -->
-  <div class="mode-tabs">
-    <button class="mode-tab active" id="tab-ai"     onclick="setMode('ai')"     data-i18n="tab_ai">🤖 AI</button>
-    <button class="mode-tab"        id="tab-quiz"   onclick="setMode('quiz')"   data-i18n="tab_quiz">🎯 Quiz</button>
-    <button class="mode-tab"        id="tab-manual" onclick="setMode('manual')" data-i18n="tab_manual">🎚️ Manual</button>
+  <!-- Mode tabs + ML button on same row -->
+  <div class="tabs-row">
+    <div class="tabs-row-spacer"></div>
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tab-ai"     onclick="setMode('ai')"     data-i18n="tab_ai">🤖 AI</button>
+      <button class="mode-tab"        id="tab-quiz"   onclick="setMode('quiz')"   data-i18n="tab_quiz">🎯 Quiz</button>
+      <button class="mode-tab"        id="tab-manual" onclick="setMode('manual')" data-i18n="tab_manual">🎚️ Manual</button>
+    </div>
+    <div class="tabs-row-right">
+      <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link" data-i18n="ml_meta_link">📊 Want to know the ML behind this?</button>
+    </div>
   </div>
 
   <!-- ══ AI MODE (coming soon) ═══════════════════════════════════════════════ -->
@@ -849,9 +871,9 @@
   <!-- ══ ML ANALYSIS PAGE ════════════════════════════════════════════════════ -->
   <div id="mode-ml">
 
-    <!-- Back button -->
-    <div style="text-align:center;margin-bottom:16px;">
-      <button onclick="setMode('ai')" class="ml-meta-link" data-i18n="ml_back" style="margin:0 auto;">← Back to the app</button>
+    <!-- Back button — left aligned -->
+    <div style="max-width:960px;margin:0 auto 16px auto;">
+      <button onclick="setMode('ai')" class="ml-meta-link" data-i18n="ml_back" style="margin:0;">← Back to the app</button>
     </div>
 
     <!-- Hero -->
@@ -1290,9 +1312,8 @@
       document.getElementById('tab-quiz').classList.toggle('active',  mode === 'quiz');
       document.getElementById('tab-manual').classList.toggle('active',mode === 'manual');
       document.getElementById('tab-ml').classList.toggle('active',    mode === 'ml');
-      // Hide tabs, ML button and language toggle when on the ML page (English only)
-      document.querySelector('.mode-tabs').style.display   = mode === 'ml' ? 'none' : '';
-      document.getElementById('tab-ml').style.display      = mode === 'ml' ? 'none' : '';
+      // Hide tabs row (mode tabs + ML button) and language toggle when on the ML page
+      document.querySelector('.tabs-row').style.display    = mode === 'ml' ? 'none' : '';
       document.querySelector('.lang-bar').style.display    = mode === 'ml' ? 'none' : '';
       document.getElementById('result').style.display = 'none';
 
@@ -1737,9 +1758,6 @@
             <div class="contrib-label" title="${label}">${label}</div>
             <div class="bar-track">
               <div class="bar-fill ${isPos ? 'pos' : 'neg'}" style="width:${pct}%"></div>
-            </div>
-            <div class="contrib-val ${isPos ? 'pos' : 'neg'}">
-              ${isPos ? '+' : ''}${c.contribution.toFixed(3)}
             </div>`;
           barsDiv.appendChild(row);
         });
