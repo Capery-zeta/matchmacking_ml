@@ -423,8 +423,8 @@
 
   <!-- Mode tabs -->
   <div class="mode-tabs">
-    <button class="mode-tab"        id="tab-ai"     onclick="setMode('ai')"     data-i18n="tab_ai">🤖 AI</button>
-    <button class="mode-tab active" id="tab-quiz"   onclick="setMode('quiz')"   data-i18n="tab_quiz">🎯 Quiz</button>
+    <button class="mode-tab active" id="tab-ai"     onclick="setMode('ai')"     data-i18n="tab_ai">🤖 AI</button>
+    <button class="mode-tab"        id="tab-quiz"   onclick="setMode('quiz')"   data-i18n="tab_quiz">🎯 Quiz</button>
     <button class="mode-tab"        id="tab-manual" onclick="setMode('manual')" data-i18n="tab_manual">🎚️ Manual</button>
   </div>
 
@@ -1072,7 +1072,7 @@
     }
 
     // ── Boot: quiz is the default mode ───────────────────────────────────────
-    window.addEventListener('DOMContentLoaded', () => setMode('quiz'));
+    window.addEventListener('DOMContentLoaded', () => setMode('ai'));
 
     // ── Manual mode — sliders ─────────────────────────────────────────────────
     document.querySelectorAll('input[type="range"]').forEach(slider => {
