@@ -238,6 +238,22 @@
     }
     .ml-cta-btn:hover { background: #3d444d; }
 
+    /* ── ML meta link ── */
+    .ml-meta-link {
+      background: none;
+      border: none;
+      color: #9b72d4;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color 0.18s, background 0.18s;
+      letter-spacing: 0.01em;
+    }
+    .ml-meta-link:hover { color: #5a2d9c; background: #f0e8ff; }
+    .ml-meta-link.active { color: #5a2d9c; }
+
     /* ── Mode tabs ── */
     .mode-tabs {
       max-width: 960px;
@@ -602,12 +618,16 @@
   <h1 data-i18n="title">💜 Matchmaking Predictor</h1>
   <p class="subtitle" data-i18n="subtitle">Will this relationship last 10 years or more? (~0.9% of couples do)</p>
 
+  <!-- ML Analysis link -->
+  <div style="text-align:center;margin-bottom:22px;">
+    <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link">📊 Curious about the ML behind this? →</button>
+  </div>
+
   <!-- Mode tabs -->
   <div class="mode-tabs">
     <button class="mode-tab active" id="tab-ai"     onclick="setMode('ai')"     data-i18n="tab_ai">🤖 AI</button>
     <button class="mode-tab"        id="tab-quiz"   onclick="setMode('quiz')"   data-i18n="tab_quiz">🎯 Quiz</button>
     <button class="mode-tab"        id="tab-manual" onclick="setMode('manual')" data-i18n="tab_manual">🎚️ Manual</button>
-    <button class="mode-tab"        id="tab-ml"     onclick="setMode('ml')">📊 ML Analysis</button>
   </div>
 
   <!-- ══ AI MODE (coming soon) ═══════════════════════════════════════════════ -->
@@ -794,6 +814,11 @@
 
   <!-- ══ ML ANALYSIS PAGE ════════════════════════════════════════════════════ -->
   <div id="mode-ml">
+
+    <!-- Back button -->
+    <div style="max-width:960px;margin:0 auto 16px auto;">
+      <button onclick="setMode('ai')" style="background:none;border:none;color:#9b72d4;font-size:0.85rem;font-weight:600;cursor:pointer;padding:4px 0;">← Back to the app</button>
+    </div>
 
     <!-- Hero -->
     <div class="ml-hero">
@@ -1236,10 +1261,13 @@
       document.getElementById('mode-quiz').style.display   = mode === 'quiz'   ? 'block' : 'none';
       document.getElementById('mode-manual').style.display = mode === 'manual' ? 'block' : 'none';
       document.getElementById('mode-ml').style.display     = mode === 'ml'     ? 'block' : 'none';
-      document.getElementById('tab-ai').classList.toggle('active',     mode === 'ai');
-      document.getElementById('tab-quiz').classList.toggle('active',   mode === 'quiz');
-      document.getElementById('tab-manual').classList.toggle('active', mode === 'manual');
-      document.getElementById('tab-ml').classList.toggle('active',     mode === 'ml');
+      document.getElementById('tab-ai').classList.toggle('active',   mode === 'ai');
+      document.getElementById('tab-quiz').classList.toggle('active',  mode === 'quiz');
+      document.getElementById('tab-manual').classList.toggle('active',mode === 'manual');
+      document.getElementById('tab-ml').classList.toggle('active',    mode === 'ml');
+      // Hide the functional tabs and the ML link when on the ML page, show them otherwise
+      document.querySelector('.mode-tabs').style.display  = mode === 'ml' ? 'none' : '';
+      document.querySelector('.ml-meta-link').parentElement.style.display = mode === 'ml' ? 'none' : '';
       document.getElementById('result').style.display = 'none';
 
       if (mode === 'quiz') {
