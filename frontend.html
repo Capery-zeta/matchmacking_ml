@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matchmaking Predictor</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+      background: #f5f0ff;
+      color: #2d2d2d;
+      padding: 40px 20px;
+    }
+
+    /* ── Language toggle ── */
+    .lang-bar {
+      max-width: 960px;
+      margin: 0 auto 20px auto;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .lang-toggle {
+      display: flex;
+      background: white;
+      border-radius: 50px;
+      padding: 3px;
+      box-shadow: 0 1px 6px rgba(90,45,156,0.12);
+      gap: 2px;
+    }
+    .lang-btn {
+      background: transparent;
+      border: none;
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #aaa;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+    .lang-btn.active { background: #5a2d9c; color: white; }
+    .lang-btn:hover:not(.active) { color: #5a2d9c; }
+
+    /* ── Header ── */
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      color: #5a2d9c;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 28px;
+      font-size: 0.95rem;
+    }
+
+    /* ── Mode tabs ── */
+    .mode-tabs {
+      max-width: 960px;
+      margin: 0 auto 24px auto;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    .mode-tab {
+      padding: 9px 28px;
+      border-radius: 50px;
+      border: 2px solid #e0d0f8;
+      background: white;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #aaa;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .mode-tab.active {
+      background: #5a2d9c;
+      border-color: #5a2d9c;
+      color: white;
+    }
+    .mode-tab:hover:not(.active) { border-color: #5a2d9c; color: #5a2d9c; }
+
+    /* ── Shared card ── */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 2px 16px rgba(90,45,156,0.08);
+      max-width: 960px;
+      margin: 0 auto 32px auto;
+    }
+
+    /* ── Manual mode ── */
+    .person-header {
+      display: grid;
+      grid-template-columns: 1fr 260px 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0e8ff;
+    }
+    .person-header .person-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #5a2d9c;
+      text-align: center;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 260px 1fr;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+    .row.select-row { align-items: start; }
+    .trait-info { text-align: center; padding: 0 8px; }
+    .trait-name { font-size: 0.85rem; font-weight: 700; color: #444; margin-bottom: 4px; }
+    .trait-desc { font-size: 0.72rem; color: #bbb; line-height: 1.4; }
+    .slider-side { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .slider-val { font-size: 0.8rem; font-weight: 700; color: #5a2d9c; }
+    input[type="range"] { width: 100%; accent-color: #5a2d9c; cursor: pointer; }
+    .select-side { display: flex; flex-direction: column; }
+    select {
+      width: 100%; padding: 8px 10px;
+      border: 1px solid #ddd; border-radius: 8px;
+      font-size: 0.85rem; color: #2d2d2d;
+      background: #fafafa; cursor: pointer; outline: none;
+    }
+    select:focus { border-color: #5a2d9c; }
+    .divider { border: none; border-top: 1px solid #f0e8ff; margin: 8px 0 22px 0; }
+    .btn-wrap { text-align: center; margin-bottom: 32px; }
+    button.predict-btn {
+      background: #5a2d9c; color: white; border: none;
+      padding: 14px 48px; border-radius: 50px;
+      font-size: 1rem; cursor: pointer; transition: background 0.2s;
+    }
+    button.predict-btn:hover { background: #7b4cc7; }
+
+    /* ── AI mode ── */
+    .ai-cols-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f0e8ff;
+    }
+    .ai-cols-header .person-title { text-align: center; }
+    .ai-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .ai-col { display: flex; flex-direction: column; gap: 8px; }
+    .ai-col-label { font-size: 0.78rem; color: #888; line-height: 1.4; min-height: 2.2em; }
+    .ai-textarea {
+      width: 100%;
+      border: 1.5px solid #e0d4f7;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      resize: vertical;
+      outline: none;
+      color: #2d2d2d;
+      background: #fafafa;
+      transition: border-color 0.18s;
+      line-height: 1.5;
+    }
+    .ai-textarea:focus { border-color: #5a2d9c; background: white; }
+    .ai-examples-label { font-size: 0.74rem; color: #bbb; margin-top: 4px; }
+    .ai-examples { display: flex; flex-direction: column; gap: 6px; }
+    .ai-example-chip {
+      background: #f5f0ff;
+      border: 1.5px solid #e0d4f7;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      color: #5a2d9c;
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.45;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .ai-example-chip:hover { background: #ede4ff; border-color: #5a2d9c; }
+    .ai-conf-row {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-top: 16px;
+      padding: 10px 16px;
+      background: #f5f0ff;
+      border-radius: 10px;
+    }
+    .ai-conf-item { font-size: 0.82rem; color: #888; }
+    .ai-conf-item strong { color: #5a2d9c; margin-left: 4px; }
+    .ai-loading-msg { margin-top: 12px; font-size: 0.85rem; color: #888; }
+    .ai-error-msg {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: #b00020;
+      background: #fff0f2;
+      border: 1px solid #f5c0c8;
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    /* ── Quiz mode ── */
+    .quiz-persons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .quiz-person-pill {
+      padding: 7px 24px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #f0e8ff;
+      color: #bbb;
+      transition: all 0.25s;
+    }
+    .quiz-person-pill.active { background: #5a2d9c; color: white; }
+    .quiz-person-pill.done   { background: #d4f7e7; color: #27ae60; }
+
+    .quiz-progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .quiz-q-counter {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #aaa;
+      white-space: nowrap;
+      min-width: 90px;
+    }
+    .quiz-progress-bar {
+      flex: 1;
+      height: 5px;
+      background: #f0e8ff;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .quiz-progress-fill {
+      height: 100%;
+      background: #5a2d9c;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .quiz-phase-intro {
+      text-align: center;
+      font-size: 0.88rem;
+      color: #5a2d9c;
+      font-weight: 600;
+      background: #f0e8ff;
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 20px;
+    }
+
+    .quiz-feat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f5f0ff;
+      border-radius: 50px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #5a2d9c;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .quiz-question {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #2d2d2d;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .quiz-option {
+      width: 100%;
+      text-align: left;
+      padding: 13px 18px;
+      border: 2px solid #f0e8ff;
+      border-radius: 12px;
+      background: white;
+      font-size: 0.88rem;
+      color: #2d2d2d;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .quiz-option:hover:not(.selected) { border-color: #c5a8f0; background: #faf5ff; }
+    .quiz-option.selected {
+      border-color: #5a2d9c;
+      background: #f0e8ff;
+      color: #5a2d9c;
+      font-weight: 600;
+    }
+
+    .quiz-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .quiz-nav-btn {
+      padding: 11px 26px;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+      font-family: inherit;
+    }
+    .quiz-nav-btn.back {
+      background: transparent;
+      border: 2px solid #e0d0f8;
+      color: #bbb;
+    }
+    .quiz-nav-btn.back:not(:disabled):hover { border-color: #5a2d9c; color: #5a2d9c; }
+    .quiz-nav-btn.next {
+      background: #5a2d9c;
+      border: 2px solid #5a2d9c;
+      color: white;
+    }
+    .quiz-nav-btn.next:not(:disabled):hover { background: #7b4cc7; border-color: #7b4cc7; }
+    .quiz-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .quiz-loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    /* ── Results ── */
+    #result { max-width: 960px; margin: 0 auto; display: none; }
+    .result-card {
+      background: white; border-radius: 16px; padding: 32px;
+      text-align: center; box-shadow: 0 2px 16px rgba(90,45,156,0.08);
+    }
+    .verdict { font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; }
+    .proba { font-size: 1rem; color: #888; margin-bottom: 28px; }
+    .positive { color: #2ecc71; }
+    .negative { color: #e74c3c; }
+
+    /* ── Feature contributions ── */
+    .contrib-section { margin-top: 24px; text-align: left; }
+    .contrib-title {
+      font-size: 0.9rem; font-weight: 700; color: #5a2d9c;
+      margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .contrib-row {
+      display: grid; grid-template-columns: 180px 1fr 60px;
+      align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .contrib-label {
+      font-size: 0.78rem; color: #444; text-align: right;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .bar-track {
+      position: relative; height: 18px;
+      background: #f5f0ff; border-radius: 9px; overflow: visible;
+    }
+    .bar-track::after {
+      content: ''; position: absolute; left: 50%; top: 0; bottom: 0;
+      width: 1px; background: #ddd;
+    }
+    .bar-fill {
+      position: absolute; top: 0; height: 100%;
+      border-radius: 9px; transition: width 0.4s ease;
+    }
+    .bar-fill.pos { left: 50%; background: linear-gradient(90deg, #a8e6cf, #2ecc71); }
+    .bar-fill.neg { right: 50%; background: linear-gradient(270deg, #ffc9c9, #e74c3c); }
+    .contrib-val { font-size: 0.75rem; font-weight: 700; text-align: left; }
+    .contrib-val.pos { color: #27ae60; }
+    .contrib-val.neg { color: #c0392b; }
+    .contrib-legend {
+      display: flex; justify-content: center; gap: 24px;
+      margin-top: 14px; font-size: 0.72rem; color: #999;
+    }
+    .contrib-legend span { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .dot.pos { background: #2ecc71; }
+    .dot.neg { background: #e74c3c; }
+
+    /* ── Footer ── */
+    .kaggle-ref {
+      text-align: center; margin-top: 40px;
+      font-size: 0.75rem; color: #bbb;
+    }
+    .kaggle-ref a { color: #5a2d9c; text-decoration: none; font-weight: 600; }
+    .kaggle-ref a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- Language toggle -->
+  <div class="lang-bar">
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn"        id="btn-ja" onclick="setLang('ja')">日本語</button>
+    </div>
+  </div>
+
+  <h1 data-i18n="title">💜 Matchmaking Predictor</h1>
+  <p class="subtitle" data-i18n="subtitle">Will this relationship last 10 years or more? (~0.9% of couples do)</p>
+
+  <!-- Mode tabs -->
+  <div class="mode-tabs">
+    <button class="mode-tab"        id="tab-ai"     onclick="setMode('ai')"     data-i18n="tab_ai">🤖 AI</button>
+    <button class="mode-tab active" id="tab-quiz"   onclick="setMode('quiz')"   data-i18n="tab_quiz">🎯 Quiz</button>
+    <button class="mode-tab"        id="tab-manual" onclick="setMode('manual')" data-i18n="tab_manual">🎚️ Manual</button>
+  </div>
+
+  <!-- ══ AI MODE (coming soon) ═══════════════════════════════════════════════ -->
+  <div id="mode-ai" style="display:none">
+    <div class="card">
+
+      <!-- Header persons -->
+      <div class="ai-cols-header">
+        <div class="person-title" data-i18n="personA">Person A</div>
+        <div class="person-title" data-i18n="personB">Person B</div>
+      </div>
+
+      <!-- Two columns -->
+      <div class="ai-cols">
+
+        <!-- ── Person A ── -->
+        <div class="ai-col">
+          <label class="ai-col-label" data-i18n="ai_label_a"></label>
+          <textarea id="ai_transcript_a" class="ai-textarea" rows="7"
+            data-i18n-placeholder="ai_placeholder_a"></textarea>
+          <div class="ai-examples-label" data-i18n="ai_examples_hint">💡 Click an example to use it:</div>
+          <div id="ai_examples_a" class="ai-examples"></div>
+        </div>
+
+        <!-- ── Person B ── -->
+        <div class="ai-col">
+          <label class="ai-col-label" data-i18n="ai_label_b"></label>
+          <textarea id="ai_transcript_b" class="ai-textarea" rows="7"
+            data-i18n-placeholder="ai_placeholder_b"></textarea>
+          <div class="ai-examples-label" data-i18n="ai_examples_hint">💡 Click an example to use it:</div>
+          <div id="ai_examples_b" class="ai-examples"></div>
+        </div>
+
+      </div>
+
+      <!-- Confidence row (hidden until extraction) -->
+      <div id="ai_confidence_row" class="ai-conf-row" style="display:none">
+        <div class="ai-conf-item">
+          <span data-i18n="ai_confidence">AI confidence</span> A :
+          <strong id="ai_conf_a">—</strong>
+        </div>
+        <div class="ai-conf-item">
+          <span data-i18n="ai_confidence">AI confidence</span> B :
+          <strong id="ai_conf_b">—</strong>
+        </div>
+      </div>
+
+      <!-- Action -->
+      <div class="btn-wrap" style="margin-top:24px; margin-bottom:0;">
+        <button id="ai_predict_btn" class="predict-btn" onclick="predictAI()" data-i18n="ai_btn_analyze">
+          🤖 Analyze &amp; predict
+        </button>
+        <div id="ai_loading" class="ai-loading-msg" style="display:none" data-i18n="ai_loading">
+          Extracting personality profiles…
+        </div>
+        <div id="ai_error" class="ai-error-msg" style="display:none"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MANUAL MODE ══════════════════════════════════════════════════════════ -->
+  <div id="mode-manual" style="display:none">
+    <div class="card">
+      <div class="person-header">
+        <div class="person-title" data-i18n="personA">Person A</div>
+        <div></div>
+        <div class="person-title" data-i18n="personB">Person B</div>
+      </div>
+
+      <div class="row">
+        <div class="slider-side">
+          <span class="slider-val" id="val-a_career_ambition">50</span>
+          <input type="range" id="a_career_ambition" min="0" max="100" value="50">
+        </div>
+        <div class="trait-info">
+          <div class="trait-name" data-i18n="trait_career_name">Career Ambition</div>
+          <div class="trait-desc" data-i18n-html="trait_career_desc">How driven you are professionally.<br>Low = work-life balance first. High = career is a top priority.</div>
+        </div>
+        <div class="slider-side">
+          <span class="slider-val" id="val-b_career_ambition">50</span>
+          <input type="range" id="b_career_ambition" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="slider-side">
+          <span class="slider-val" id="val-a_chronotype">50</span>
+          <input type="range" id="a_chronotype" min="0" max="100" value="50">
+        </div>
+        <div class="trait-info">
+          <div class="trait-name" data-i18n="trait_chronotype_name">Chronotype</div>
+          <div class="trait-desc" data-i18n-html="trait_chronotype_desc">Natural sleep/wake preference.<br>Low = night owl. High = early bird.</div>
+        </div>
+        <div class="slider-side">
+          <span class="slider-val" id="val-b_chronotype">50</span>
+          <input type="range" id="b_chronotype" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="slider-side">
+          <span class="slider-val" id="val-a_emotional_expressiveness">50</span>
+          <input type="range" id="a_emotional_expressiveness" min="0" max="100" value="50">
+        </div>
+        <div class="trait-info">
+          <div class="trait-name" data-i18n="trait_ee_name">Emotional Expressiveness</div>
+          <div class="trait-desc" data-i18n-html="trait_ee_desc">How openly you share your feelings.<br>Low = reserved &amp; private. High = openly expressive.</div>
+        </div>
+        <div class="slider-side">
+          <span class="slider-val" id="val-b_emotional_expressiveness">50</span>
+          <input type="range" id="b_emotional_expressiveness" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="slider-side">
+          <span class="slider-val" id="val-a_openness">50</span>
+          <input type="range" id="a_openness" min="0" max="100" value="50">
+        </div>
+        <div class="trait-info">
+          <div class="trait-name" data-i18n="trait_openness_name">Openness</div>
+          <div class="trait-desc" data-i18n-html="trait_openness_desc">How curious and open to new experiences you are.<br>Low = prefers routine. High = adventurous &amp; creative.</div>
+        </div>
+        <div class="slider-side">
+          <span class="slider-val" id="val-b_openness">50</span>
+          <input type="range" id="b_openness" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="slider-side">
+          <span class="slider-val" id="val-a_spontaneity">50</span>
+          <input type="range" id="a_spontaneity" min="0" max="100" value="50">
+        </div>
+        <div class="trait-info">
+          <div class="trait-name" data-i18n="trait_spontaneity_name">Spontaneity</div>
+          <div class="trait-desc" data-i18n-html="trait_spontaneity_desc">How much you enjoy unplanned situations.<br>Low = prefers to plan ahead. High = loves last-minute.</div>
+        </div>
+        <div class="slider-side">
+          <span class="slider-val" id="val-b_spontaneity">50</span>
+          <input type="range" id="b_spontaneity" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="row select-row">
+        <div class="select-side">
+          <select id="a_love_language">
+            <option value="Acts of Service"     data-i18n-opt="ll_acts">Acts of Service</option>
+            <option value="Physical Touch"      data-i18n-opt="ll_touch">Physical Touch</option>
+            <option value="Quality Time"        data-i18n-opt="ll_time">Quality Time</option>
+            <option value="Receiving Gifts"     data-i18n-opt="ll_gifts">Receiving Gifts</option>
+            <option value="Words of Affirmation" data-i18n-opt="ll_words">Words of Affirmation</option>
+          </select>
+        </div>
+        <div class="trait-info">
+          <div class="trait-name" data-i18n="trait_love_name">Love Language</div>
+        </div>
+        <div class="select-side">
+          <select id="b_love_language">
+            <option value="Acts of Service"     data-i18n-opt="ll_acts">Acts of Service</option>
+            <option value="Physical Touch"      data-i18n-opt="ll_touch">Physical Touch</option>
+            <option value="Quality Time"        data-i18n-opt="ll_time">Quality Time</option>
+            <option value="Receiving Gifts"     data-i18n-opt="ll_gifts">Receiving Gifts</option>
+            <option value="Words of Affirmation" data-i18n-opt="ll_words">Words of Affirmation</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="predict-btn" onclick="predict()" data-i18n="btn_predict">Predict compatibility</button>
+    </div>
+  </div>
+
+  <!-- ══ QUIZ MODE ════════════════════════════════════════════════════════════ -->
+  <div id="mode-quiz">
+    <div class="card" id="quiz-container">
+      <div class="quiz-loading" data-i18n="quiz_loading">Loading questions…</div>
+    </div>
+  </div>
+
+  <!-- ══ RESULTS (shared) ═════════════════════════════════════════════════════ -->
+  <div id="result">
+    <div class="result-card">
+      <div class="verdict" id="verdict"></div>
+      <div class="proba"   id="proba"></div>
+
+      <div class="contrib-section" id="contrib-section" style="display:none">
+        <div class="contrib-title" data-i18n="contrib_title">Why this score? — Feature contributions</div>
+        <div id="contrib-bars"></div>
+        <div class="contrib-legend">
+          <span><span class="dot pos"></span><span data-i18n="legend_pos">Pushes toward long-lasting</span></span>
+          <span><span class="dot neg"></span><span data-i18n="legend_neg">Pushes against</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="kaggle-ref">
+    <span data-i18n="footer_builtby">Built by</span>
+    <a href="https://github.com/Capery-zeta/matchmacking_ml" target="_blank" rel="noopener">Céline Apéry</a>
+    &nbsp;·&nbsp;
+    <span data-i18n="footer_model">Model trained on the</span>
+    <a href="https://www.kaggle.com/datasets/likithagedipudi/cupids-algorithm" target="_blank" rel="noopener"
+       data-i18n="footer_dataset">Cupid's Algorithm — Kaggle dataset</a>
+  </p>
+
+  <script>
+    // ── i18n ─────────────────────────────────────────────────────────────────
+    const STRINGS = {
+      en: {
+        title:               '💜 Matchmaking Predictor',
+        subtitle:            'Will this relationship last 10 years or more? (~0.9% of couples do)',
+        tab_ai:              '🤖 AI',
+        tab_quiz:            '🎯 Quiz',
+        tab_manual:          '🎚️ Manual',
+        ai_label_a:          'Describe Person A freely — work habits, personality, relationship style…',
+        ai_label_b:          'Describe Person B freely — work habits, personality, relationship style…',
+        ai_placeholder_a:    'e.g. She works a lot, often late nights. Very ambitious. A bit reserved emotionally but very caring. Loves spontaneous weekends, hates routine. Quality time is everything to her.',
+        ai_placeholder_b:    'e.g. He is very chill, a total night owl. Not career-driven at all. Super open and expressive. Plans everything meticulously. His love language is acts of service.',
+        ai_btn_analyze:      '🤖 Analyze & predict',
+        ai_loading:          'Extracting personality profiles…',
+        ai_confidence:       'AI confidence',
+        ai_examples_hint:    '💡 Click an example to use it:',
+        ai_error_empty:      '⚠️ Please describe both <strong>Person A</strong> and <strong>Person B</strong> before analyzing.',
+        ai_error_api:        '🔌 Could not reach the API. Make sure the backend is running on <code>localhost:8000</code>.',
+        ai_error_extract_a:  '❌ Could not extract a personality profile for <strong>Person A</strong>. Try adding more detail about their work habits, personality, and relationship style.',
+        ai_error_extract_b:  '❌ Could not extract a personality profile for <strong>Person B</strong>. Try adding more detail about their work habits, personality, and relationship style.',
+        ai_error_422:        '⚠️ The description was too short or ambiguous. Write at least 2–3 sentences per person covering their work style, personality, and what matters to them in a relationship.',
+        personA:             'Person A',
+        personB:             'Person B',
+        trait_career_name:   'Career Ambition',
+        trait_career_desc:   'How driven you are professionally.<br>Low = work-life balance first. High = career is a top priority.',
+        trait_chronotype_name: 'Chronotype',
+        trait_chronotype_desc: 'Natural sleep/wake preference.<br>Low = night owl. High = early bird.',
+        trait_ee_name:       'Emotional Expressiveness',
+        trait_ee_desc:       'How openly you share your feelings.<br>Low = reserved &amp; private. High = openly expressive.',
+        trait_openness_name: 'Openness',
+        trait_openness_desc: 'How curious and open to new experiences you are.<br>Low = prefers routine. High = adventurous &amp; creative.',
+        trait_spontaneity_name: 'Spontaneity',
+        trait_spontaneity_desc: 'How much you enjoy unplanned situations.<br>Low = prefers to plan ahead. High = loves last-minute.',
+        trait_love_name:     'Love Language',
+        ll_acts:             'Acts of Service',
+        ll_touch:            'Physical Touch',
+        ll_time:             'Quality Time',
+        ll_gifts:            'Receiving Gifts',
+        ll_words:            'Words of Affirmation',
+        btn_predict:         'Predict compatibility',
+        quiz_loading:        'Loading questions…',
+        quiz_question_of:    n => `Question ${n} of 6`,
+        quiz_back:           '← Back',
+        quiz_next:           'Next →',
+        quiz_continue_b:     'Continue to Person B →',
+        quiz_predict:        'Predict compatibility ✨',
+        quiz_hint:           'Select an answer to continue',
+        quiz_person_b_intro: 'Great! Now tell us about Person B.',
+        result_match:        '💚 Rare match — this couple could go the distance (10+ years)!',
+        result_nomatch:      '💔 Unlikely to reach 10 years together.',
+        result_proba:        p => `Probability of lasting 10+ years: ${p}%`,
+        contrib_title:       'Why this score? — Feature contributions',
+        legend_pos:          'Pushes toward long-lasting',
+        legend_neg:          'Pushes against',
+        feat_career:         'Career Ambition gap',
+        feat_chrono:         'Chronotype gap',
+        feat_ee:             'Emotional Expressiveness gap',
+        feat_openness:       'Openness gap',
+        feat_spontaneity:    'Spontaneity gap',
+        feat_love:           'Same Love Language',
+        footer_builtby:      'Built by',
+        footer_model:        'Model trained on the',
+        footer_dataset:      "Cupid's Algorithm — Kaggle dataset",
+        error_api:           'Could not reach the API. Make sure the backend is running on localhost:8000.',
+        error_quiz_load:     'Could not load quiz questions. Make sure the backend is running.',
+      },
+      ja: {
+        title:               '💜 マッチング予測',
+        subtitle:            'このカップルは10年以上続くでしょうか？（達成できるのは約0.9%）',
+        tab_ai:              '🤖 AI',
+        tab_quiz:            '🎯 クイズ',
+        tab_manual:          '🎚️ 手動',
+        ai_label_a:          '人物 A を自由に説明してください — 仕事のスタイル、性格、恋愛傾向など',
+        ai_label_b:          '人物 B を自由に説明してください — 仕事のスタイル、性格、恋愛傾向など',
+        ai_placeholder_a:    '例：仕事熱心で夜遅くまで働くことが多い。とても野心的。感情は少し内向きだが思いやりがある。自発的な週末が好きで、ルーティンは苦手。クオリティタイムが最も大切。',
+        ai_placeholder_b:    '例：のんびり屋で完全な夜型。仕事よりプライベート重視。とてもオープンで感情豊か。何でも計画的に進める。愛の言語は奉仕行動。',
+        ai_btn_analyze:      '🤖 分析して予測する',
+        ai_loading:          '性格プロフィールを抽出中…',
+        ai_confidence:       'AI 信頼度',
+        ai_examples_hint:    '💡 例をクリックして使う:',
+        ai_error_empty:      '⚠️ 分析する前に、<strong>人物 A</strong> と <strong>人物 B</strong> の両方を入力してください。',
+        ai_error_api:        '🔌 APIに接続できません。<code>localhost:8000</code> でバックエンドが起動しているか確認してください。',
+        ai_error_extract_a:  '❌ <strong>人物 A</strong> の性格プロフィールを抽出できませんでした。仕事スタイル・性格・恋愛観についてもう少し詳しく書いてみてください。',
+        ai_error_extract_b:  '❌ <strong>人物 B</strong> の性格プロフィールを抽出できませんでした。仕事スタイル・性格・恋愛観についてもう少し詳しく書いてみてください。',
+        ai_error_422:        '⚠️ 説明が短すぎるか曖昧です。1人につき最低2〜3文、仕事スタイル・性格・恋愛で大切にしていることを書いてください。',
+        personA:             '人物 A',
+        personB:             '人物 B',
+        trait_career_name:   'キャリア志向',
+        trait_career_desc:   '仕事への意欲。<br>低い＝ワークライフバランス優先。高い＝キャリアが最優先。',
+        trait_chronotype_name: 'クロノタイプ',
+        trait_chronotype_desc: '自然な睡眠・起床リズム。<br>低い＝夜型。高い＝朝型。',
+        trait_ee_name:       '感情表現力',
+        trait_ee_desc:       '感情をどれだけ素直に表現するか。<br>低い＝控えめ・内向き。高い＝積極的に表現する。',
+        trait_openness_name: '開放性',
+        trait_openness_desc: '新しいことへの好奇心と柔軟性。<br>低い＝ルーティン好き。高い＝冒険的・創造的。',
+        trait_spontaneity_name: '自発性',
+        trait_spontaneity_desc: '計画外の状況への対応力。<br>低い＝事前計画重視。高い＝その場の流れを楽しむ。',
+        trait_love_name:     '愛の言語',
+        ll_acts:             '奉仕行動',
+        ll_touch:            '身体的接触',
+        ll_time:             'クオリティタイム',
+        ll_gifts:            '贈り物',
+        ll_words:            '肯定の言葉',
+        btn_predict:         '相性を予測する',
+        quiz_loading:        '質問を読み込んでいます…',
+        quiz_question_of:    n => `質問 ${n} / 6`,
+        quiz_back:           '← 戻る',
+        quiz_next:           '次へ →',
+        quiz_continue_b:     '人物 B へ進む →',
+        quiz_predict:        '相性を予測する ✨',
+        quiz_hint:           '続けるには回答を選択してください',
+        quiz_person_b_intro: 'よし！次は人物 B について教えてください。',
+        result_match:        '💚 稀なマッチ — このカップルは長続きする可能性があります（10年以上）！',
+        result_nomatch:      '💔 10年以上続く可能性は低いです。',
+        result_proba:        p => `10年以上続く確率：${p}%`,
+        contrib_title:       'スコアの理由 — 各要素の寄与',
+        legend_pos:          '長続きに貢献',
+        legend_neg:          '長続きの妨げ',
+        feat_career:         'キャリア志向の差',
+        feat_chrono:         'クロノタイプの差',
+        feat_ee:             '感情表現力の差',
+        feat_openness:       '開放性の差',
+        feat_spontaneity:    '自発性の差',
+        feat_love:           '同じ愛の言語',
+        footer_builtby:      '制作：',
+        footer_model:        'モデルの学習データ：',
+        footer_dataset:      "Cupid's Algorithm — Kaggle データセット",
+        error_api:           'APIに接続できません。バックエンドがlocalhost:8000で起動しているか確認してください。',
+        error_quiz_load:     '質問を読み込めません。バックエンドが起動しているか確認してください。',
+      }
+    };
+
+    // Feature display config
+    const FEATURE_ORDER = [
+      'career_ambition', 'chronotype', 'emotional_expressiveness',
+      'openness', 'spontaneity', 'love_language'
+    ];
+    const FEAT_ICONS = {
+      career_ambition: '💼', chronotype: '🌙',
+      emotional_expressiveness: '💬', openness: '🌍',
+      spontaneity: '⚡', love_language: '❤️'
+    };
+    const FEAT_I18N = {
+      career_ambition: 'trait_career_name', chronotype: 'trait_chronotype_name',
+      emotional_expressiveness: 'trait_ee_name', openness: 'trait_openness_name',
+      spontaneity: 'trait_spontaneity_name', love_language: 'trait_love_name'
+    };
+    const FEAT_CONTRIB_I18N = {
+      'Career Ambition gap': 'feat_career', 'Chronotype gap': 'feat_chrono',
+      'Emotional Expressiveness gap': 'feat_ee', 'Openness gap': 'feat_openness',
+      'Spontaneity gap': 'feat_spontaneity', 'Same Love Language': 'feat_love'
+    };
+
+    // ── API base URL (localhost en dev, HF Space en prod) ─────────────────────
+    const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:8000'
+      : 'https://capery-ml-matchmaking-api.hf.space';
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    let currentLang  = 'en';
+    let currentMode  = 'manual';
+    let quizData     = null;
+    let variantMap   = {};   // { feat: { A: idx, B: idx } }
+    let quizAnswers  = { A: {}, B: {} };
+    let quizPhase    = 'A';
+    let quizQIdx     = 0;
+    let currentOptions = []; // options of the currently displayed question
+
+    // ── i18n ─────────────────────────────────────────────────────────────────
+    function setLang(lang) {
+      currentLang = lang;
+      const S = STRINGS[lang];
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('btn-ja').classList.toggle('active', lang === 'ja');
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (S[key] && typeof S[key] === 'string') el.textContent = S[key];
+      });
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (S[key]) el.innerHTML = S[key];
+      });
+      document.querySelectorAll('[data-i18n-opt]').forEach(opt => {
+        const key = opt.getAttribute('data-i18n-opt');
+        if (S[key]) opt.textContent = S[key];
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (S[key]) el.placeholder = S[key];
+      });
+
+      // Re-render quiz if active (to update UI strings)
+      if (currentMode === 'quiz' && quizData) renderQuiz();
+      // Re-draw AI examples in new language
+      if (currentMode === 'ai') renderAIExamples();
+    }
+
+    // ── Mode switch ───────────────────────────────────────────────────────────
+    async function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('mode-ai').style.display     = mode === 'ai'     ? 'block' : 'none';
+      document.getElementById('mode-quiz').style.display   = mode === 'quiz'   ? 'block' : 'none';
+      document.getElementById('mode-manual').style.display = mode === 'manual' ? 'block' : 'none';
+      document.getElementById('tab-ai').classList.toggle('active',     mode === 'ai');
+      document.getElementById('tab-quiz').classList.toggle('active',   mode === 'quiz');
+      document.getElementById('tab-manual').classList.toggle('active', mode === 'manual');
+      document.getElementById('result').style.display = 'none';
+
+      if (mode === 'quiz') {
+        await loadQuizData();
+        if (quizData) startQuiz();
+      }
+
+      if (mode === 'manual') randomiseManualSliders();
+      if (mode === 'ai')     renderAIExamples();
+    }
+
+    // ── Manual mode — randomise sliders on entry ──────────────────────────────
+    const LOVE_LANGUAGES = [
+      'Acts of Service', 'Physical Touch', 'Quality Time',
+      'Receiving Gifts', 'Words of Affirmation'
+    ];
+
+    function randomiseManualSliders() {
+      const sliderIds = [
+        'a_career_ambition', 'b_career_ambition',
+        'a_chronotype',      'b_chronotype',
+        'a_emotional_expressiveness', 'b_emotional_expressiveness',
+        'a_openness',        'b_openness',
+        'a_spontaneity',     'b_spontaneity',
+      ];
+
+      // Random int in [10, 90] — évite les extrêmes absolus
+      const randVal = () => Math.floor(Math.random() * 81) + 10;
+
+      sliderIds.forEach(id => {
+        const slider = document.getElementById(id);
+        const label  = document.getElementById('val-' + id);
+        if (!slider || !label) return;
+        const v = randVal();
+        slider.value    = v;
+        label.textContent = v;
+      });
+
+      // Love languages : random indépendant pour A et B
+      ['a_love_language', 'b_love_language'].forEach(id => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        sel.value = LOVE_LANGUAGES[Math.floor(Math.random() * LOVE_LANGUAGES.length)];
+      });
+    }
+
+    // ── Quiz data ─────────────────────────────────────────────────────────────
+    async function loadQuizData() {
+      if (quizData) return;
+      try {
+        const res = await fetch(`${API_BASE}/quiz_questions`);
+        quizData  = await res.json();
+      } catch (e) {
+        document.getElementById('quiz-container').innerHTML =
+          `<div class="quiz-loading">${STRINGS[currentLang].error_quiz_load}</div>`;
+      }
+    }
+
+    function initVariantMap() {
+      variantMap = {};
+      for (const feat of FEATURE_ORDER) {
+        const n    = quizData.features[feat].variants.length;
+        const aIdx = Math.floor(Math.random() * n);
+        let   bIdx;
+        do { bIdx = Math.floor(Math.random() * n); } while (bIdx === aIdx);
+        variantMap[feat] = { A: aIdx, B: bIdx };
+      }
+    }
+
+    function startQuiz() {
+      quizAnswers = { A: {}, B: {} };
+      quizPhase   = 'A';
+      quizQIdx    = 0;
+      initVariantMap();
+      renderQuiz();
+    }
+
+    // ── Quiz rendering ────────────────────────────────────────────────────────
+    function renderQuiz() {
+      const S          = STRINGS[currentLang];
+      const feat       = FEATURE_ORDER[quizQIdx];
+      const featData   = quizData.features[feat];
+      const vIdx       = variantMap[feat][quizPhase];
+      const variant    = featData.variants[vIdx];
+      const selected   = quizAnswers[quizPhase][feat];
+      const qNum       = quizQIdx + 1;
+      const isFirstEver = quizQIdx === 0 && quizPhase === 'A';
+      const isLastQ    = quizQIdx === FEATURE_ORDER.length - 1;
+      const isBPhase   = quizPhase === 'B';
+      const aComplete  = Object.keys(quizAnswers.A).length === FEATURE_ORDER.length;
+
+      currentOptions = variant.options;
+
+      // Next button label
+      let nextLabel;
+      if (isLastQ && isBPhase)       nextLabel = S.quiz_predict;
+      else if (isLastQ && !isBPhase) nextLabel = S.quiz_continue_b;
+      else                           nextLabel = S.quiz_next;
+
+      const hasAnswer = selected !== undefined;
+
+      // Localised text helpers
+      const qText   = (currentLang === 'ja' && variant.question_ja) ? variant.question_ja : variant.question;
+      const optText = opt => (currentLang === 'ja' && opt.label_ja) ? opt.label_ja : opt.label;
+
+      // Options HTML
+      const optionsHTML = variant.options.map((opt, i) => {
+        const isSel = selected !== undefined &&
+                      String(selected) === String(opt.value);
+        return `<button class="quiz-option${isSel ? ' selected' : ''}"
+                        onclick="selectAnswerByIndex(${i})">
+                  ${escapeHtml(optText(opt))}
+                </button>`;
+      }).join('');
+
+      document.getElementById('quiz-container').innerHTML = `
+        <!-- Person pills -->
+        <div class="quiz-persons">
+          <div class="quiz-person-pill ${quizPhase === 'A' ? 'active' : 'done'}">
+            ${S.personA}${aComplete && isBPhase ? ' ✓' : ''}
+          </div>
+          <div class="quiz-person-pill ${isBPhase ? 'active' : ''}">
+            ${S.personB}
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="quiz-progress-wrap">
+          <span class="quiz-q-counter">${S.quiz_question_of(qNum)}</span>
+          <div class="quiz-progress-bar">
+            <div class="quiz-progress-fill" style="width:${(qNum / FEATURE_ORDER.length) * 100}%"></div>
+          </div>
+        </div>
+
+        ${isBPhase && quizQIdx === 0
+          ? `<div class="quiz-phase-intro">${S.quiz_person_b_intro}</div>`
+          : ''}
+
+        <!-- Feature badge -->
+        <div class="quiz-feat-badge">
+          <span>${FEAT_ICONS[feat]}</span>
+          <span>${S[FEAT_I18N[feat]] || featData.label}</span>
+        </div>
+
+        <!-- Question -->
+        <p class="quiz-question">${escapeHtml(qText)}</p>
+
+        <!-- Options -->
+        <div class="quiz-options">${optionsHTML}</div>
+
+        <!-- Navigation -->
+        <div class="quiz-nav">
+          <button class="quiz-nav-btn back" onclick="quizBack()"
+                  ${isFirstEver ? 'disabled' : ''}>
+            ${S.quiz_back}
+          </button>
+          <button class="quiz-nav-btn next" onclick="quizNext()"
+                  ${!hasAnswer ? 'disabled' : ''}>
+            ${nextLabel}
+          </button>
+        </div>
+      `;
+    }
+
+    function selectAnswerByIndex(i) {
+      const feat = FEATURE_ORDER[quizQIdx];
+      quizAnswers[quizPhase][feat] = currentOptions[i].value;
+      renderQuiz();
+    }
+
+    function quizNext() {
+      const feat = FEATURE_ORDER[quizQIdx];
+      if (quizAnswers[quizPhase][feat] === undefined) return;
+
+      if (quizQIdx < FEATURE_ORDER.length - 1) {
+        quizQIdx++;
+        renderQuiz();
+      } else if (quizPhase === 'A') {
+        quizPhase = 'B';
+        quizQIdx  = 0;
+        renderQuiz();
+      } else {
+        // Both phases complete — predict
+        predictFromQuiz();
+      }
+    }
+
+    function quizBack() {
+      if (quizQIdx > 0) {
+        quizQIdx--;
+        renderQuiz();
+      } else if (quizPhase === 'B') {
+        quizPhase = 'A';
+        quizQIdx  = FEATURE_ORDER.length - 1;
+        renderQuiz();
+      }
+      // Phase A, question 0: back disabled
+    }
+
+    function predictFromQuiz() {
+      const a = quizAnswers.A;
+      const b = quizAnswers.B;
+      const payload = {
+        a_career_ambition:          a.career_ambition,
+        b_career_ambition:          b.career_ambition,
+        a_chronotype:               a.chronotype,
+        b_chronotype:               b.chronotype,
+        a_emotional_expressiveness: a.emotional_expressiveness,
+        b_emotional_expressiveness: b.emotional_expressiveness,
+        a_openness:                 a.openness,
+        b_openness:                 b.openness,
+        a_spontaneity:              a.spontaneity,
+        b_spontaneity:              b.spontaneity,
+        a_love_language:            a.love_language,   // already English value
+        b_love_language:            b.love_language,
+      };
+      predict(payload);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // ── Boot: quiz is the default mode ───────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => setMode('quiz'));
+
+    // ── Manual mode — sliders ─────────────────────────────────────────────────
+    document.querySelectorAll('input[type="range"]').forEach(slider => {
+      slider.addEventListener('input', () => {
+        document.getElementById('val-' + slider.id).textContent = slider.value;
+      });
+    });
+
+    // ── AI mode — example descriptions ───────────────────────────────────────
+    const AI_EXAMPLES = {
+      en: [
+        "This person is intensely career-driven, often working past midnight. A convinced night owl who rarely shares emotions. Very methodical — plans everything weeks in advance. Love language: words of affirmation.",
+        "This person is very laid-back and not career-motivated at all. Wakes up naturally around noon on weekends. Super emotionally open — cries at films, laughs loudly. Loves spontaneous last-minute adventures. Love language: physical touch.",
+        "This person works hard but keeps clear work-life boundaries — never checks emails after 7pm. Up early every morning, loves the quiet of dawn. Reserved about feelings but deeply caring. Love language: quality time.",
+        "This person is a free spirit — quit their job twice to travel. Night owl, creative, always trying new things. Very expressive emotionally and physically affectionate. No plan ever survives their spontaneity.",
+        "This person is an ambitious young executive, already managing a team at 28. Early bird, gym at 6am daily. Processes emotions privately but is loyal and dependable. Love language: acts of service — just handles things quietly.",
+        "This person is a relaxed teacher who values holidays and time with loved ones above all. Average chronotype, asleep by 10pm. Cries easily, loves deep conversations. Love language: receiving gifts — always brings small thoughtful surprises.",
+        "This person is a startup founder, obsessed with their product. Barely sleeps. Struggles to open up emotionally — shows love by fixing things and solving problems. Very open to new ideas but hates unplanned schedule changes.",
+        "This person is an artist and part-time DJ. Night owl to the core. Extremely expressive — wears emotions publicly. Impulsive, hates routine, books flights the night before. Love language: physical closeness.",
+        "This person works night shifts and is used to irregular hours. Calm and grounded, emotionally balanced. Opens up slowly but deeply. Prefers familiar places for holidays. Love language: quality time, phones off.",
+        "This person retired early and now tends a garden and reads. Very early bird. Quietly affectionate — never says much but always present. Plans every trip six months ahead. Love language: acts of service — fixes, builds, cooks.",
+      ],
+      ja: [
+        "深夜まで仕事をするほどキャリア志向が強い人物。完全な夜型で感情はめったに表に出さない。何事も数週間前から計画する几帳面なタイプ。愛の言語は肯定の言葉。",
+        "のんびり屋で仕事への意欲はほぼゼロの人物。週末は自然に正午ごろ目が覚める。映画で泣き、声を出して笑う感情全開タイプ。直前の思いつき旅行が大好き。愛の言語は身体的接触。",
+        "仕事はしっかりこなすが19時以降はメールを見ない人物。毎朝早起きして静かな朝を楽しむ。感情は内に秘めるが思いやりは深い。愛の言語はクオリティタイム。",
+        "2度仕事を辞めて旅に出た自由人タイプ。夜型でクリエイティブ、常に新しいことに挑戦する。感情豊かでスキンシップが多い。計画は立てても守ったためしがない。",
+        "28歳でチームを率いる野心的な若手幹部タイプの人物。毎朝6時にジム。感情は内処理するが信頼できる存在。愛情表現は奉仕行動 — 黙ってやってのけるタイプ。",
+        "休日と家族を何より大切にするのんびり屋の人物。22時には就寝。涙もろく深い話が好き。小さなプレゼントをよく贈る。愛の言語はギフトを受け取ること。",
+        "自分のプロダクトに没頭するスタートアップ創業者タイプ。ほぼ眠らない。感情表現は苦手で愛情は問題解決と修理で示す。新アイデアには開放的だが予定変更は嫌い。",
+        "アーティスト兼パートDJタイプの人物。根っからの夜型。感情をすべて表に出す超表現派。衝動的でルーティン嫌い、前夜にフライトを予約することも。愛の言語は身体的接触。",
+        "不規則な生活に慣れた夜勤ワーカータイプ。落ち着いていて感情はバランスが取れている。ゆっくり開くが深い信頼関係を築く。旅行はなじみの場所を好む。愛の言語はスマホオフのクオリティタイム。",
+        "早期退職して今は菜園と読書の日々を送る人物。超早起き。口数は少ないが常にそこにいる存在感。旅行は半年前から計画。愛情表現は奉仕行動 — 直す、作る、料理する。",
+      ]
+    };
+
+    function renderAIExamples() {
+      const pool = AI_EXAMPLES[currentLang] || AI_EXAMPLES.en;
+
+      // Pick 4 distinct indices for A (×2) and B (×2) — no overlap at all
+      const indices = [];
+      while (indices.length < 4) {
+        const idx = Math.floor(Math.random() * pool.length);
+        if (!indices.includes(idx)) indices.push(idx);
+      }
+      const [iA1, iA2, iB1, iB2] = indices;
+
+      [['a', iA1, iA2], ['b', iB1, iB2]].forEach(([person, i1, i2]) => {
+        const container = document.getElementById(`ai_examples_${person}`);
+        if (!container) return;
+        container.innerHTML = '';
+        [i1, i2].forEach(idx => {
+          const chip = document.createElement('button');
+          chip.className = 'ai-example-chip';
+          chip.textContent = pool[idx];
+          chip.onclick = () => {
+            document.getElementById(`ai_transcript_${person}`).value = pool[idx];
+          };
+          container.appendChild(chip);
+        });
+      });
+    }
+
+    // ── AI mode — extract + predict ───────────────────────────────────────────
+    async function predictAI() {
+      const S           = STRINGS[currentLang];
+      const transcriptA = document.getElementById('ai_transcript_a').value.trim();
+      const transcriptB = document.getElementById('ai_transcript_b').value.trim();
+      const errorDiv    = document.getElementById('ai_error');
+      const loadingDiv  = document.getElementById('ai_loading');
+      const btn         = document.getElementById('ai_predict_btn');
+      const confRow     = document.getElementById('ai_confidence_row');
+
+      // Reset
+      errorDiv.style.display  = 'none';
+      confRow.style.display   = 'none';
+      document.getElementById('result').style.display = 'none';
+
+      if (!transcriptA || !transcriptB) {
+        errorDiv.textContent  = S.ai_error_empty;
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      // Loading state
+      btn.disabled           = true;
+      loadingDiv.style.display = 'block';
+
+      try {
+        const res = await fetch(`${API_BASE}/ai_interview`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            a_transcript:   transcriptA,
+            b_transcript:   transcriptB,
+            run_prediction: true,
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        // Show confidence badges
+        document.getElementById('ai_conf_a').textContent =
+          Math.round((data.person_a.confidence ?? 0) * 100) + '%';
+        document.getElementById('ai_conf_b').textContent =
+          Math.round((data.person_b.confidence ?? 0) * 100) + '%';
+        confRow.style.display = 'block';
+
+        // Reuse the shared display logic with the prediction payload
+        displayResult(data.prediction);
+
+      } catch (e) {
+        let msg = e.message || '';
+        if (!msg || msg === 'Failed to fetch') {
+          msg = S.ai_error_api;
+        } else if (msg.toLowerCase().includes('person a')) {
+          msg = S.ai_error_extract_a;
+        } else if (msg.toLowerCase().includes('person b')) {
+          msg = S.ai_error_extract_b;
+        } else if (msg.includes('422')) {
+          msg = S.ai_error_422;
+        }
+        errorDiv.innerHTML     = msg;
+        errorDiv.style.display = 'block';
+      } finally {
+        btn.disabled             = false;
+        loadingDiv.style.display = 'none';
+      }
+    }
+
+    // ── Predict (shared between manual and quiz) ──────────────────────────────
+    async function predict(prebuiltPayload = null) {
+      const S   = STRINGS[currentLang];
+      const get = id => document.getElementById(id);
+
+      let payload;
+      if (prebuiltPayload) {
+        payload = prebuiltPayload;
+      } else {
+        const score = id => parseFloat(get(id).value) / 100;
+        payload = {
+          a_career_ambition:          score('a_career_ambition'),
+          b_career_ambition:          score('b_career_ambition'),
+          a_chronotype:               score('a_chronotype'),
+          b_chronotype:               score('b_chronotype'),
+          a_emotional_expressiveness: score('a_emotional_expressiveness'),
+          b_emotional_expressiveness: score('b_emotional_expressiveness'),
+          a_openness:                 score('a_openness'),
+          b_openness:                 score('b_openness'),
+          a_spontaneity:              score('a_spontaneity'),
+          b_spontaneity:              score('b_spontaneity'),
+          a_love_language:            get('a_love_language').value,
+          b_love_language:            get('b_love_language').value,
+        };
+      }
+
+      try {
+        const res  = await fetch(`${API_BASE}/predict`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        displayResult(data);
+
+      } catch (e) {
+        alert(STRINGS[currentLang].error_api);
+      }
+    }
+
+    // ── Shared result display ─────────────────────────────────────────────────
+    function displayResult(data) {
+      const S   = STRINGS[currentLang];
+      const get = id => document.getElementById(id);
+
+      const resultDiv = get('result');
+      const verdict   = get('verdict');
+      const proba     = get('proba');
+      resultDiv.style.display = 'block';
+
+      if (data.long_lasting) {
+        verdict.className   = 'verdict positive';
+        verdict.textContent = S.result_match;
+      } else {
+        verdict.className   = 'verdict negative';
+        verdict.textContent = S.result_nomatch;
+      }
+      proba.textContent = S.result_proba(Math.round(data.probability * 100));
+
+      // Feature contributions
+      if (data.contributions && data.contributions.length) {
+        const section = get('contrib-section');
+        const barsDiv = get('contrib-bars');
+        section.style.display = 'block';
+        barsDiv.innerHTML     = '';
+
+        const maxAbs = Math.max(...data.contributions.map(c => Math.abs(c.contribution)));
+
+        data.contributions.forEach(c => {
+          const isPos   = c.contribution >= 0;
+          const pct     = maxAbs > 0 ? (Math.abs(c.contribution) / maxAbs) * 48 : 0;
+          const i18nKey = FEAT_CONTRIB_I18N[c.label];
+          const label   = (i18nKey && S[i18nKey]) ? S[i18nKey] : c.label;
+
+          const row = document.createElement('div');
+          row.className = 'contrib-row';
+          row.innerHTML = `
+            <div class="contrib-label" title="${label}">${label}</div>
+            <div class="bar-track">
+              <div class="bar-fill ${isPos ? 'pos' : 'neg'}" style="width:${pct}%"></div>
+            </div>
+            <div class="contrib-val ${isPos ? 'pos' : 'neg'}">
+              ${isPos ? '+' : ''}${c.contribution.toFixed(3)}
+            </div>`;
+          barsDiv.appendChild(row);
+        });
+      }
+
+      resultDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>
