@@ -258,34 +258,36 @@
 
     /* ── Mobile responsive ── */
     @media (max-width: 600px) {
+      /* Person header : "Person A" | "Person B" côte à côte, sans colonne centrale */
       .person-header {
         grid-template-columns: 1fr 1fr;
         gap: 8px;
       }
-      .person-header > :first-child { display: none; } /* cache le label vide central */
+      .person-header > :nth-child(2) { display: none; } /* cache la colonne centrale vide */
 
+      /* Chaque ligne de trait : label en haut pleine largeur, sliders A + B côte à côte en dessous */
       .row {
         grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "info info"
+          "a    b";
         gap: 8px;
       }
-      .row .trait-info {
-        grid-column: 1 / -1;
-        order: -1;
-        border-bottom: 1px solid #f0e8ff;
-        padding-bottom: 8px;
-        margin-bottom: 4px;
-      }
+      .row > :nth-child(1) { grid-area: a; }   /* slider A */
+      .row > :nth-child(2) { grid-area: info; border-bottom: 1px solid #f0e8ff; padding-bottom: 8px; } /* trait info */
+      .row > :nth-child(3) { grid-area: b; }   /* slider B */
+
+      /* Même logique pour les selects (love language) */
       .row.select-row {
         grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "info info"
+          "a    b";
       }
-      .row.select-row .trait-info {
-        grid-column: 1 / -1;
-        order: -1;
-      }
+
       .card { padding: 16px; }
       .mode-tabs { gap: 4px; }
       .mode-tab { padding: 8px 14px; font-size: 0.8rem; }
-      .ml-meta-link { font-size: 0.7rem; padding: 14px 8px; }
     }
 
     /* ── Mode tabs ── */
