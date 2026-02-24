@@ -620,7 +620,7 @@
 
   <!-- ML Analysis link -->
   <div style="text-align:center;margin-bottom:22px;">
-    <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link">📊 Curious about the ML behind this? →</button>
+    <button id="tab-ml" onclick="setMode('ml')" class="ml-meta-link" data-i18n="ml_meta_link">📊 Curious about the ML behind this? →</button>
   </div>
 
   <!-- Mode tabs -->
@@ -817,7 +817,7 @@
 
     <!-- Back button -->
     <div style="max-width:960px;margin:0 auto 16px auto;">
-      <button onclick="setMode('ai')" style="background:none;border:none;color:#9b72d4;font-size:0.85rem;font-weight:600;cursor:pointer;padding:4px 0;">← Back to the app</button>
+      <button onclick="setMode('ai')" style="background:none;border:none;color:#9b72d4;font-size:0.85rem;font-weight:600;cursor:pointer;padding:4px 0;" data-i18n="ml_back">← Back to the app</button>
     </div>
 
     <!-- Hero -->
@@ -1120,6 +1120,8 @@
         footer_dataset:      "Cupid's Algorithm — Kaggle dataset",
         error_api:           'Could not reach the API. Make sure the backend is running on localhost:8000.',
         error_quiz_load:     'Could not load quiz questions. Make sure the backend is running.',
+        ml_meta_link:        '📊 Curious about the ML behind this? →',
+        ml_back:             '← Back to the app',
       },
       ja: {
         title:               '💜 マッチング予測',
@@ -1184,6 +1186,8 @@
         footer_dataset:      "Cupid's Algorithm — Kaggle データセット",
         error_api:           'APIに接続できません。バックエンドがlocalhost:8000で起動しているか確認してください。',
         error_quiz_load:     '質問を読み込めません。バックエンドが起動しているか確認してください。',
+        ml_meta_link:        '📊 このMLの仕組みが気になりますか？ →',
+        ml_back:             '← アプリに戻る',
       }
     };
 
