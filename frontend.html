@@ -1330,6 +1330,8 @@
         history.pushState({ mode }, '', '#' + mode);
       }
 
+      if (mode === 'ml') window.scrollTo({ top: 0, behavior: 'smooth' });
+
       if (mode === 'quiz') {
         await loadQuizData();
         if (quizData) startQuiz();
