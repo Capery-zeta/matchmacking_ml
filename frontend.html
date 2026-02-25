@@ -1632,7 +1632,12 @@
     const MIN_CONFIDENCE = 0.70; // minimum AI extraction confidence to run the ML prediction
 
     function countWords(text) {
-      return text.trim().split(/\s+/).filter(w => w.length > 0).length;
+      const words    = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+      // CJK languages (Japanese, Chinese, Korean) don't use spaces between words —
+      // use character count / 3 as a word-equivalent proxy instead.
+      const cjkChars = (text.match(/[\u3000-\u9fff\uac00-\ud7af\uf900-\ufaff]/g) || []).length;
+      if (cjkChars > words * 3) return Math.round(cjkChars / 3);
+      return words;
     }
 
     // ── AI mode — extract + predict ───────────────────────────────────────────
