@@ -1115,6 +1115,10 @@
         ai_error_extract_a:  '❌ Could not extract a personality profile for <strong>Person A</strong>. Try adding more detail about their work habits, personality, and relationship style.',
         ai_error_extract_b:  '❌ Could not extract a personality profile for <strong>Person B</strong>. Try adding more detail about their work habits, personality, and relationship style.',
         ai_error_422:        '⚠️ The description was too short or ambiguous. Write at least 2–3 sentences per person covering their work style, personality, and what matters to them in a relationship.',
+        ai_error_too_short:  '⚠️ Your description is too short to analyze. Please write <strong>at least 3–4 sentences</strong> per person, covering:<br><br>🧠 <strong>Personality</strong> (e.g. reserved, spontaneous, creative…)<br>💼 <strong>Work & ambition</strong> (e.g. career-driven, work-life balance…)<br>🌙 <strong>Sleep style</strong> (e.g. night owl, early riser…)<br>❤️ <strong>Love language</strong> (e.g. quality time, acts of service…)',
+        ai_error_low_conf_a: pct => `⚠️ AI confidence for <strong>Person A</strong> is only ${pct}% — not enough to predict reliably. Add more detail about their personality, work habits, sleep schedule, and love language.`,
+        ai_error_low_conf_b: pct => `⚠️ AI confidence for <strong>Person B</strong> is only ${pct}% — not enough to predict reliably. Add more detail about their personality, work habits, sleep schedule, and love language.`,
+        ai_error_low_conf_both: (pA, pB) => `⚠️ AI confidence is too low for both persons (A: ${pA}%, B: ${pB}%). Please describe each person in more detail, covering personality, work style, sleep habits, and love language.`,
         personA:             'Person A',
         personB:             'Person B',
         trait_career_name:   'Career Ambition',
@@ -1181,6 +1185,10 @@
         ai_error_extract_a:  '❌ <strong>人物 A</strong> の性格プロフィールを抽出できませんでした。仕事スタイル・性格・恋愛観についてもう少し詳しく書いてみてください。',
         ai_error_extract_b:  '❌ <strong>人物 B</strong> の性格プロフィールを抽出できませんでした。仕事スタイル・性格・恋愛観についてもう少し詳しく書いてみてください。',
         ai_error_422:        '⚠️ 説明が短すぎるか曖昧です。1人につき最低2〜3文、仕事スタイル・性格・恋愛で大切にしていることを書いてください。',
+        ai_error_too_short:  '⚠️ 説明が短すぎます。1人につき<strong>3〜4文以上</strong>、以下の内容を含めてください：<br><br>🧠 <strong>性格</strong>（例：内向的、自発的、創造的…）<br>💼 <strong>仕事・野心</strong>（例：キャリア志向、仕事とプライベートのバランスを重視…）<br>🌙 <strong>睡眠スタイル</strong>（例：夜型、朝型…）<br>❤️ <strong>愛の言語</strong>（例：クオリティタイム、奉仕行動…）',
+        ai_error_low_conf_a: pct => `⚠️ <strong>人物 A</strong> のAI信頼度が${pct}%しかなく、信頼性の高い予測ができません。性格・仕事スタイル・睡眠習慣・愛の言語についてもっと詳しく書いてください。`,
+        ai_error_low_conf_b: pct => `⚠️ <strong>人物 B</strong> のAI信頼度が${pct}%しかなく、信頼性の高い予測ができません。性格・仕事スタイル・睡眠習慣・愛の言語についてもっと詳しく書いてください。`,
+        ai_error_low_conf_both: (pA, pB) => `⚠️ 両人物のAI信頼度が低すぎます（A: ${pA}%、B: ${pB}%）。それぞれについて、性格・仕事スタイル・睡眠習慣・愛の言語をもっと詳しく説明してください。`,
         personA:             '人物 A',
         personB:             '人物 B',
         trait_career_name:   'キャリア志向',
@@ -1619,6 +1627,14 @@
       });
     }
 
+    // ── AI mode — validation constants ───────────────────────────────────────
+    const MIN_WORDS      = 15;   // minimum words per description before calling the API
+    const MIN_CONFIDENCE = 0.70; // minimum AI extraction confidence to run the ML prediction
+
+    function countWords(text) {
+      return text.trim().split(/\s+/).filter(w => w.length > 0).length;
+    }
+
     // ── AI mode — extract + predict ───────────────────────────────────────────
     async function predictAI() {
       const S           = STRINGS[currentLang];
@@ -1635,7 +1651,16 @@
       document.getElementById('result').style.display = 'none';
 
       if (!transcriptA || !transcriptB) {
-        errorDiv.textContent  = S.ai_error_empty;
+        errorDiv.innerHTML    = S.ai_error_empty;
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      // ── Pre-call validation: minimum word count ──────────────────────────
+      const wordsA = countWords(transcriptA);
+      const wordsB = countWords(transcriptB);
+      if (wordsA < MIN_WORDS || wordsB < MIN_WORDS) {
+        errorDiv.innerHTML     = S.ai_error_too_short;
         errorDiv.style.display = 'block';
         return;
       }
@@ -1662,14 +1687,32 @@
 
         const data = await res.json();
 
-        // Show confidence badges
-        document.getElementById('ai_conf_a').textContent =
-          Math.round((data.person_a.confidence ?? 0) * 100) + '%';
-        document.getElementById('ai_conf_b').textContent =
-          Math.round((data.person_b.confidence ?? 0) * 100) + '%';
+        // ── Always show confidence badges ────────────────────────────────
+        const confA        = data.person_a.confidence ?? 0;
+        const confB        = data.person_b.confidence ?? 0;
+        const confAPercent = Math.round(confA * 100);
+        const confBPercent = Math.round(confB * 100);
+
+        document.getElementById('ai_conf_a').textContent = confAPercent + '%';
+        document.getElementById('ai_conf_b').textContent = confBPercent + '%';
         confRow.style.display = 'block';
 
-        // Reuse the shared display logic with the prediction payload
+        // ── Post-call confidence threshold (70%) ─────────────────────────
+        if (confA < MIN_CONFIDENCE && confB < MIN_CONFIDENCE) {
+          errorDiv.innerHTML     = S.ai_error_low_conf_both(confAPercent, confBPercent);
+          errorDiv.style.display = 'block';
+          return;
+        } else if (confA < MIN_CONFIDENCE) {
+          errorDiv.innerHTML     = S.ai_error_low_conf_a(confAPercent);
+          errorDiv.style.display = 'block';
+          return;
+        } else if (confB < MIN_CONFIDENCE) {
+          errorDiv.innerHTML     = S.ai_error_low_conf_b(confBPercent);
+          errorDiv.style.display = 'block';
+          return;
+        }
+
+        // ── Confidence OK — run prediction ───────────────────────────────
         displayResult(data.prediction);
 
       } catch (e) {
